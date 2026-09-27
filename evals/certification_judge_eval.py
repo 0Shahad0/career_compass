@@ -10,9 +10,16 @@ HOW IT WORKS
 5. Log every run + scores to LangSmith as a named experiment.
 6. Print a scores table and save certification_judge_results.csv.
 
-NOTE: The certification agent uses semantic search over a local dataset
-(no external API calls for the recommendation step), so no tool patching is
-needed — we can call the real agent directly with the fixture profile.
+NOTE: The certification agent uses semantic search over a local dataset.
+      The semantic index MUST be pre-built before running this eval.
+      If you see a "Semantic cache unavailable" error, run:
+
+          python -m backend.tools.certification_search
+
+      (or call build_semantic_index() in a Python shell) to fetch and
+      embed all certification blueprints from GitHub first.
+      That step requires internet access and an OPENAI_API_KEY.
+      Subsequent eval runs are fully offline.
 
 SCORING CRITERIA (1 = poor, 5 = excellent)
 ──────────────────────────────────────────
@@ -25,6 +32,15 @@ SCORING CRITERIA (1 = poor, 5 = excellent)
 from __future__ import annotations
 
 import sys
+import warnings
+# Suppress a known cosmetic warning from LangChain's with_structured_output():
+# Pydantic warns about an unexpected 'parsed' field in the raw LLM response
+# object. This does not affect results.
+warnings.filterwarnings(
+    "ignore",
+    message="Pydantic serializer warnings",
+    category=UserWarning,
+)
 # Force UTF-8 output on Windows (default terminal encoding is cp1252 which
 # cannot encode box-drawing characters used in the score table).
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -44,6 +60,7 @@ from pydantic import BaseModel, Field
 
 from backend.agents.certification_agent2 import recommend_certifications
 from backend.schemas.profile import UserProfile
+from backend.tools.certification_search import MANIFEST_PATH
 from evals.judge_utils import build_judge_llm, compute_overall, log_to_langsmith, print_scores_table
 
 
@@ -163,6 +180,17 @@ Score the response now.
 # ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    # ── Pre-flight: ensure the semantic index exists ──────────────────────────
+    if not MANIFEST_PATH.exists():
+        print(
+            "\n[ERROR] Semantic index not found.",
+            "\nThe certification eval requires the semantic index to be built first.",
+            "\nRun the following command (needs internet + OPENAI_API_KEY):",
+            "\n\n    python -c \"from backend.tools.certification_search import build_semantic_index; build_semantic_index()\"",
+            "\n\nThis only needs to be done once. Subsequent eval runs are fully offline.",
+        )
+        sys.exit(1)
+
     cases = json.loads(CASES_PATH.read_text(encoding="utf-8"))
 
     all_results = []

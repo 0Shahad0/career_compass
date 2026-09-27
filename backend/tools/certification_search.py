@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import time
 import unicodedata
 import uuid
 from functools import lru_cache
@@ -12,6 +13,7 @@ from tempfile import NamedTemporaryFile
 from threading import RLock
 from urllib.parse import quote
 
+import certifi
 import numpy as np
 import requests
 from openai import OpenAI
@@ -23,7 +25,7 @@ BASE_DATA_URL = (
     "https://raw.githubusercontent.com/hans6883/cert-atlas/master/data"
 )
 INDEX_URL = f"{BASE_DATA_URL}/index.json"
-REQUEST_TIMEOUT = 30
+REQUEST_TIMEOUT = (10, 30)  # (connect_timeout, read_timeout) — covers SSL handshake
 
 EMBEDDING_MODEL = "text-embedding-3-small"
 TOP_K = 40
@@ -51,7 +53,13 @@ def _normalize(value: object) -> str:
 
 
 def _get_json(url: str) -> dict:
-    response = requests.get(url, timeout=REQUEST_TIMEOUT)
+    try:
+        response = requests.get(url, timeout=REQUEST_TIMEOUT, verify=certifi.where())
+    except requests.exceptions.ConnectTimeout:
+        raise requests.RequestException(
+            f"Connection to {url} timed out (SSL/TCP handshake). "
+            "Check your internet connection or proxy settings."
+        )
     response.raise_for_status()
 
     data = response.json()
@@ -90,7 +98,18 @@ def _atomic_write(path: Path, payload: bytes) -> None:
             file.flush()
             os.fsync(file.fileno())
 
-        os.replace(temporary, path)
+        # On Windows, antivirus (e.g. Defender) briefly locks newly created
+        # temp files, causing os.replace() to raise PermissionError (WinError 5).
+        # Retry with exponential backoff to ride out the lock window.
+        for attempt in range(6):
+            try:
+                os.replace(temporary, path)
+                temporary = None  # rename succeeded — don't delete in finally
+                return
+            except PermissionError:
+                if attempt == 5:
+                    raise
+                time.sleep(0.05 * (2 ** attempt))  # 50ms, 100ms, 200ms, 400ms, 800ms
 
     finally:
         if temporary is not None:
