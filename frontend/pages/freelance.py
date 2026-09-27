@@ -177,7 +177,13 @@ def show_proposal_dialog(project_index: int, project: dict):
     # Extract project data that we need for both the API call and display
     title = project.get("title", "Untitled Project")
     match_info = project.get("match", {})
-    description = match_info.get("explanation", "")
+    # Use the match explanation as the description; fall back to the project's
+    # own description field if explanation is empty (some API responses omit it)
+    description = (
+        match_info.get("explanation", "")
+        or project.get("description", "")
+        or title  # last resort — at least give the LLM the title
+    )
     budget = project.get("budget_or_rate", "")
     matching_skills = match_info.get("matching_skills", [])
     missing_skills = match_info.get("missing_skills", [])

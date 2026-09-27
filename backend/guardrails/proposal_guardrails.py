@@ -121,35 +121,21 @@ def validate_proposal_request(
 
     Called before generate_proposal() in the /freelance/proposal endpoint.
 
-    Parameters
-    ──────────
-    project_title       — The title of the project from ProposalRequest.
-    project_description — The description of the project from ProposalRequest.
+    NOTE: This function is intentionally a no-op (always passes).
+    ─────────────────────────────────────────────────────────────
+    The /freelance/proposal endpoint receives STRUCTURED PROJECT DATA from the
+    frontend (title + description from the freelance agent's output) — not
+    free-form user text. An LLM classifier given a project title like
+    "Build a RAG chatbot" correctly identifies it as "not a proposal-writing
+    request" and blocks it, which is the wrong behaviour.
 
-    Raises
-    ──────
-    ValueError — if the request is classified as off-topic.
-                 The message is user-facing and safe to return in an HTTP 422.
+    The appropriate guardrail is on the CHAT endpoint (validate_chat_message),
+    where the user types free-form text that could genuinely be off-topic.
+    The generation endpoint is only reachable by authenticated users who have
+    already loaded the freelance results page, so the attack surface is minimal.
     """
-    # Build a user message that gives the classifier enough context to decide
-    user_message = (
-        f"Project title: {project_title}\n"
-        f"Project description: {project_description}\n\n"
-        "Is this request related to writing a freelance proposal?"
-    )
-
-    decision: _TopicDecision = _classifier.invoke([
-        {"role": "system", "content": _CLASSIFIER_SYSTEM},
-        {"role": "user",   "content": user_message},
-    ])
-
-    if not decision.is_proposal_related:
-        # Raise a ValueError with a clean, user-facing message.
-        # The calling code (career.py) converts this to HTTP 422.
-        raise ValueError(
-            "This endpoint is only for generating freelance proposals. "
-            f"Your request appears to be off-topic: {decision.reason}"
-        )
+    # Always allow — see docstring above.
+    return
 
 
 def validate_chat_message(user_message: str) -> None:
