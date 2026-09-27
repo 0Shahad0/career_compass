@@ -1,0 +1,322 @@
+/* ==================================================
+   SIGN IN PAGE
+   ================================================== */
+
+/* Remove Streamlit header */
+[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* Full browser width */
+.stMainBlockContainer {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+[data-testid="stAppViewContainer"] {
+    padding: 0 !important;
+}
+
+
+/* =========================================
+   FULL PAGE
+   ========================================= */
+
+.st-key-signin_shell {
+    min-height: 100vh !important;
+
+    background: linear-gradient(
+        to right,
+        #E2EAF1 0%,
+        #E2EAF1 50%,
+        #FFFFFF 50%,
+        #FFFFFF 100%
+    ) !important;
+}
+
+/* No gap between columns */
+.st-key-signin_shell [data-testid="stHorizontalBlock"] {
+    gap: 0 !important;
+    align-items: stretch !important;
+}
+
+.st-key-signin_shell [data-testid="stColumn"] {
+    padding: 0 !important;
+}
+
+
+/* =========================================
+   LEFT SIDE
+   ========================================= */
+
+.st-key-signin_left {
+    min-height: 100vh !important;
+
+    background: transparent !important;
+
+    padding: 0 7vw !important;
+}
+
+.st-key-signin_left > div[data-testid="stVerticalBlock"] {
+    min-height: 100vh !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+.signin-left-content {
+    width: 100%;
+    max-width: 680px;
+
+    margin: 0 !important;
+}
+
+.signin-eyebrow {
+    color: #0B2E4F !important;
+
+    font-size: 12px !important;
+    font-weight: 700 !important;
+
+    letter-spacing: 3px;
+
+    margin: 0 0 28px !important;
+}
+
+.signin-main-title {
+    color: #0B2E4F !important;
+
+    font-size: clamp(42px, 4vw, 58px) !important;
+    line-height: 1.12 !important;
+
+    font-weight: 700 !important;
+
+    letter-spacing: -1.5px;
+
+    margin: 0 0 28px !important;
+}
+
+.signin-description {
+    color: #627D98 !important;
+
+    font-size: 18px !important;
+    line-height: 1.7 !important;
+
+    max-width: 590px;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================
+   RIGHT SIDE
+   ========================================= */
+
+.st-key-signin_right {
+    min-height: 100vh !important;
+
+    background: transparent !important;
+
+    padding: 45px 7vw 60px !important;
+}
+
+.st-key-signin_right > div[data-testid="stVerticalBlock"] {
+    max-width: 600px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   BACK BUTTON
+   ========================================= */
+
+.st-key-back_home_signin button {
+    width: 46px !important;
+    height: 46px !important;
+
+    min-width: 46px !important;
+
+    padding: 0 !important;
+
+    background: #FFFFFF !important;
+
+    border: 1px solid #D9E2EC !important;
+    border-radius: 10px !important;
+
+    color: #1597E5 !important;
+}
+
+.st-key-back_home_signin button:hover {
+    background: #EDF7FD !important;
+
+    border-color: #1597E5 !important;
+}
+
+
+/* =========================================
+   FORM HEADING
+   ========================================= */
+
+.signin-form-heading {
+    margin-top: 55px;
+    margin-bottom: 32px;
+}
+
+.signin-form-heading .signin-eyebrow {
+    margin-bottom: 18px !important;
+}
+
+.signin-form-heading h2 {
+    color: #0B2E4F !important;
+
+    font-size: 32px !important;
+    font-weight: 700 !important;
+
+    margin: 0 0 10px !important;
+}
+
+.signin-form-heading > p:last-child {
+    color: #627D98 !important;
+
+    font-size: 16px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================
+   INPUTS
+   ========================================= */
+
+.st-key-signin_right label p {
+    color: #0B2E4F !important;
+
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+.st-key-signin_right input {
+    min-height: 55px !important;
+
+    background: #F4F7FA !important;
+
+    border-radius: 8px !important;
+
+    font-size: 16px !important;
+}
+
+
+/* =========================================
+   SIGN IN BUTTON
+   ========================================= */
+
+.st-key-signin_btn button {
+    min-height: 56px !important;
+
+    margin-top: 12px !important;
+
+    background: #1597E5 !important;
+
+    border-color: #1597E5 !important;
+
+    color: #FFFFFF !important;
+
+    font-weight: 600 !important;
+
+    border-radius: 8px !important;
+}
+
+.st-key-signin_btn button:hover {
+    background: #0B2E4F !important;
+
+    border-color: #0B2E4F !important;
+}
+
+
+/* =========================================
+   CREATE ACCOUNT ROW
+   ========================================= */
+
+.st-key-signin_signup_row {
+    margin-top: 26px !important;
+
+    gap: 4px !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.signin-create-text {
+    color: #627D98 !important;
+
+    font-size: 16px !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap;
+}
+
+.st-key-go_signup button {
+    background: transparent !important;
+
+    border: none !important;
+
+    padding: 0 2px !important;
+    margin: 0 !important;
+
+    min-height: auto !important;
+
+    color: #1597E5 !important;
+
+    font-size: 16px !important;
+    font-weight: 500 !important;
+}
+
+.st-key-go_signup button p {
+    color: #1597E5 !important;
+
+    margin: 0 !important;
+}
+
+.st-key-go_signup button:hover,
+.st-key-go_signup button:hover p {
+    color: #0B2E4F !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .st-key-signin_shell {
+        background: #FFFFFF !important;
+    }
+
+    .st-key-signin_left {
+        min-height: 420px !important;
+
+        background: #E2EAF1 !important;
+
+        padding: 60px 35px !important;
+    }
+
+    .st-key-signin_left > div[data-testid="stVerticalBlock"] {
+        min-height: auto !important;
+    }
+
+    .st-key-signin_right {
+        min-height: auto !important;
+
+        padding: 40px 35px 60px !important;
+    }
+
+    .signin-main-title {
+        font-size: 40px !important;
+    }
+}

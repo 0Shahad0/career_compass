@@ -2,6 +2,7 @@ from datetime import date
 from html import escape
 from pathlib import Path
 import re
+from components.navbar import render_navbar
 
 import requests
 import streamlit as st
@@ -86,6 +87,49 @@ st.html(
         font-size: 13px;
         margin-top: 3px;
     }
+
+    .st-key-back_to_certifications button {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+
+    padding: 0 !important;
+
+    border: 1px solid #D9E2EC !important;
+    border-radius: 9px !important;
+
+    background: #FFFFFF !important;
+    color: #1597E5 !important;
+
+    box-shadow: none !important;
+}
+
+.st-key-back_to_certifications button:hover {
+    background: #EDF7FD !important;
+    border-color: #1597E5 !important;
+}
+
+.st-key-study_plan_setup .stFormSubmitButton button {
+    background: #51BEE8 !important;
+    border: 1px solid #51BEE8 !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.st-key-study_plan_setup .stFormSubmitButton button:hover {
+    background: #0B2E4F !important;
+    border-color: #0B2E4F !important;
+    color: #FFFFFF !important;
+}
+
+.st-key-study_plan_setup .stFormSubmitButton button:active {
+    background: #0B2E4F !important;
+    border-color: #0B2E4F !important;
+    color: #FFFFFF !important;
+}
     </style>
     """
 )
@@ -94,6 +138,39 @@ st.html(
 # =========================================================
 # HELPERS
 # =========================================================
+
+TARGET_ICON = """
+<svg viewBox="0 0 24 24" width="28" height="28"
+     fill="none" stroke="#1597E5" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"></circle>
+    <circle cx="12" cy="12" r="5"></circle>
+    <circle cx="12" cy="12" r="1"></circle>
+    <path d="M15 9l6-6"></path>
+    <path d="M17 3h4v4"></path>
+</svg>
+"""
+
+CALENDAR_ICON = """
+<svg viewBox="0 0 24 24" width="28" height="28"
+     fill="none" stroke="#1597E5" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+    <path d="M16 3v4"></path>
+    <path d="M8 3v4"></path>
+    <path d="M3 10h18"></path>
+</svg>
+"""
+
+GRADUATION_ICON = """
+<svg viewBox="0 0 24 24" width="28" height="28"
+     fill="none" stroke="#1597E5" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 9l10-5 10 5-10 5L2 9z"></path>
+    <path d="M6 11.5V16c3.5 3 8.5 3 12 0v-4.5"></path>
+    <path d="M22 9v6"></path>
+</svg>
+"""
 
 def clear_plan():
     for key in (
@@ -134,6 +211,30 @@ def section_header(number, title, subtitle):
         """
     )
 
+
+def plan_section_title(icon, title):
+    st.html(
+        f"""
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:10px;
+            margin-bottom:10px;
+        ">
+            <div style="display:flex; align-items:center;">
+                {icon}
+            </div>
+
+            <div style="
+                color:#0B2E4F;
+                font-size:18px;
+                font-weight:700;
+            ">
+                {escape(title)}
+            </div>
+        </div>
+        """
+    )
 
 def authentication_error():
     st.error("Your session has expired. Please sign in again.")
@@ -202,6 +303,7 @@ def parse_study_plan(markdown):
         (3, "study priorities", "priorities"),
         (3, "weekly plan", "weekly"),
         (3, "exam preparation", "preparation"),
+        (2, "practice & official resources", "resources"),
     ]
 
     sections = {key: [] for _, _, key in expected}
@@ -282,6 +384,7 @@ def parse_study_plan(markdown):
             "priorities",
             "weekly",
             "preparation",
+            "resources",
         )
     ):
         return None
@@ -312,33 +415,13 @@ if not token:
 # NAVIGATION
 # =========================================================
 
-with st.container(
-    horizontal=True,
-    horizontal_alignment="distribute",
-    vertical_alignment="center",
-):
-    st.image(ASSETS / "logo.png", width=170)
-
-    st.html(
-        """
-        <nav class="cc-navlinks">
-            <a href="#">Dashboard</a>
-            <a href="#">Jobs</a>
-            <a href="#">Freelance</a>
-            <a class="active" href="#">Certifications</a>
-            <a href="#">Profile</a>
-        </nav>
-        """
-    )
-
-    st.write("")
-
-st.divider()
+render_navbar("Certifications")
 
 if st.button(
-    "← Back to Certifications",
-    type="tertiary",
+    "",
     key="back_to_certifications",
+    type="tertiary",
+    icon=":material/arrow_back:",
 ):
     st.switch_page("pages/certifications.py")
 
@@ -682,22 +765,39 @@ with st.container(border=True, key="personalized_plan_card"):
         )
 
     with st.container(border=True):
-        st.markdown("### 🎯 Study Priorities")
+        plan_section_title(TARGET_ICON,"Study Priorities",)
         st.markdown(
             sections["priorities"],
             unsafe_allow_html=False,
         )
 
     with st.container(border=True):
-        st.markdown("### 📅 Weekly Plan")
+        plan_section_title(CALENDAR_ICON, "Weekly Plan",)
         st.markdown(
             sections["weekly"],
             unsafe_allow_html=False,
         )
 
     with st.container(border=True):
-        st.markdown("### 🎓 Exam Preparation")
+        plan_section_title( GRADUATION_ICON,"Exam Preparation",)
         st.markdown(
             sections["preparation"],
             unsafe_allow_html=False,
         )
+        
+    st.write("")
+
+    with st.container(
+       border=True,
+       key="practice_official_resources_card",
+):
+        section_header(
+          "03",
+          "Practice & Official Resources",
+          "Use these official resources to prepare for your exam.",
+    )
+
+        st.markdown(
+           sections["resources"],
+           unsafe_allow_html=False,
+    )

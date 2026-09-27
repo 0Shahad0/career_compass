@@ -1,0 +1,843 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+
+/* =========================================
+   CAREERCOMPASS DASHBOARD
+   ========================================= */
+
+:root {
+    --cc-primary: #0B2E4F;
+    --cc-secondary: #1597E5;
+    --cc-accent: #39C6F4;
+
+    --cc-bg: #F7F9FC;
+    --cc-surface: #FFFFFF;
+
+    --cc-text: #102A43;
+    --cc-muted: #627D98;
+
+    --cc-border: #D9E2EC;
+    --cc-soft-blue: #EDF7FD;
+}
+
+
+/* =========================================
+   PAGE
+   ========================================= */
+
+[data-testid="stApp"] {
+    background: var(--cc-bg) !important;
+    color: var(--cc-text);
+
+    font-family: 'IBM Plex Sans', Arial, sans-serif;
+}
+
+.stMainBlockContainer {
+    max-width: 1440px !important;
+
+    padding: 0 4rem 4rem !important;
+
+    margin: 0 auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+button,
+a {
+    font-family: 'IBM Plex Sans', Arial, sans-serif !important;
+}
+
+
+/* Streamlit header */
+
+[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
+.st-key-dash_nav {
+    position: relative !important;
+
+    min-height: 105px !important;
+
+    padding: 16px 0px !important;
+    margin: 0 !important;
+
+    border: none !important;
+
+    background: transparent !important;
+
+    z-index: 1;
+
+    background: #FFFFFF !important;
+
+    border-bottom: 1px solid #D9E2EC !important;
+
+  
+}
+/* Full-width white navbar background */
+.st-key-dash_nav::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 50%;
+
+    width: 100vw;
+
+    transform: translateX(-50%);
+
+    background: #FFFFFF;
+
+    border-bottom: 1px solid #D9E2EC;
+
+    z-index: -1;
+}
+/* Navigation links */
+
+.st-key-dash_nav_links {
+    width: 100% !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    gap: 42px !important;
+}
+
+
+/* All navigation buttons */
+
+.st-key-dash_nav_links button {
+    background: transparent !important;
+
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+
+    box-shadow: none !important;
+
+    color: #627D98 !important;
+
+    font-size: 16px !important;
+    font-weight: 400 !important;
+
+    padding: 20px 0 12px !important;
+
+    min-height: auto !important;
+}
+
+
+.st-key-dash_nav_links button p {
+    color: inherit !important;
+
+    font-size: 16px !important;
+    font-weight: inherit !important;
+
+    margin: 0 !important;
+}
+
+
+/* Hover */
+
+.st-key-dash_nav_links button:hover {
+    background: transparent !important;
+
+    color: #1597E5 !important;
+}
+
+
+/* Dashboard active */
+
+.st-key-nav_dashboard button {
+    color: #1597E5 !important;
+
+    font-weight: 600 !important;
+
+    border-bottom: 3px solid #1597E5 !important;
+}
+/* User avatar */
+
+.cc-avatar {
+    position: absolute !important;
+
+    right: 0 !important;
+    top: 50% !important;
+
+    transform: translateY(-50%) !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+
+    background: #EAF3F8 !important;
+    color: #1597E5 !important;
+
+    border-radius: 50% !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+
+    z-index: 10 !important;
+}
+
+
+/* =========================================
+   USER AVATAR BUTTON
+   ========================================= */
+
+.st-key-user_avatar_btn {
+    position: absolute !important;
+
+    right: 0 !important;
+    top: 50% !important;
+
+    transform: translateY(-50%) !important;
+
+    z-index: 10 !important;
+}
+
+
+.st-key-user_avatar_btn button {
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    padding: 0 !important;
+
+    border: none !important;
+
+    border-radius: 50% !important;
+
+    background: #EAF3F8 !important;
+
+    color: #1597E5 !important;
+
+    box-shadow: none !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+
+.st-key-user_avatar_btn button p {
+    color: #1597E5 !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+
+    margin: 0 !important;
+}
+
+
+.st-key-user_avatar_btn button:hover {
+    background: #DDECF5 !important;
+
+    border: none !important;
+}
+
+/* =========================================
+   USER MENU DIALOG
+   ========================================= */
+
+[data-testid="stDialog"] [role="dialog"] {
+    border-radius: 14px !important;
+
+    padding: 12px !important;
+}
+
+
+/* CAREERCOMPASS title */
+
+[data-testid="stDialog"] h2 {
+    color: #0B2E4F !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    letter-spacing: 2px !important;
+}
+
+
+/* User name */
+
+.user-menu-info h2 {
+    color: #0B2E4F !important;
+
+    font-size: 30px !important;
+    font-weight: 700 !important;
+
+    letter-spacing: -0.5px !important;
+
+    margin: 22px 0 2px !important;
+}
+
+
+/* Sign out button */
+
+.st-key-dialog_signout button {
+    background: #1597E5 !important;
+    border: 1px solid #1597E5 !important;
+    color: #FFFFFF !important;
+
+    border-radius: 8px !important;
+
+    font-weight: 600 !important;
+
+    box-shadow: none !important;
+}
+
+.st-key-dialog_signout button p {
+    color: #FFFFFF !important;
+}
+
+/* Hover */
+.st-key-dialog_signout button:hover {
+    background: #0B2E4F !important;
+    border-color: #0B2E4F !important;
+    color: #FFFFFF !important;
+}
+
+.st-key-dialog_signout button:hover p {
+    color: #FFFFFF !important;
+}
+
+
+/* Email */
+
+.user-menu-info p {
+    color: #627D98 !important;
+
+    font-size: 16px !important;
+
+    margin: 0 !important;
+}
+
+/* =========================================
+   HERO
+   ========================================= */
+
+.st-key-dash_hero {
+    padding: 48px 0 28px !important;
+}
+
+
+.cc-dashboard-eyebrow {
+    color: #0B2E4F !important;
+
+    font-size: 11px !important;
+    font-weight: 700 !important;
+
+    letter-spacing: 2.5px;
+
+    margin: 0 0 10px !important;
+}
+
+
+.cc-dashboard-title {
+    color: #0B2E4F !important;
+
+    font-size: clamp(32px, 3vw, 43px) !important;
+
+    font-weight: 700 !important;
+
+    line-height: 1.15 !important;
+
+    letter-spacing: -1px;
+
+    margin: 0 0 8px !important;
+}
+
+
+.cc-dashboard-subtitle {
+    color: #627D98 !important;
+
+    font-size: 15px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================
+   CAREER PROFILE CARD
+   ========================================= */
+
+.st-key-dash_profile_card {
+    background: #FFFFFF !important;
+
+    border: 1px solid #D9E2EC !important;
+
+    border-radius: 12px !important;
+
+    padding: 28px 30px !important;
+
+    margin-bottom: 28px !important;
+
+    box-shadow:
+        0 1px 3px rgba(11, 46, 79, 0.03) !important;
+}
+
+
+/* Profile header */
+
+.cc-profile-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.cc-profile-avatar {
+    width: 46px;
+    height: 46px;
+
+    background: #E8F3F7;
+
+    color: #1597E5;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+.cc-profile-card-title {
+    color: #0B2E4F;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    margin-bottom: 1px;
+}
+
+
+.cc-profile-card-sub {
+    color: #829AB1;
+
+    font-size: 12px;
+}
+
+
+/* View profile button */
+
+.st-key-view_profile_btn button {
+    background: #FFFFFF !important;
+
+    border: 1px solid #D9E2EC !important;
+
+    color: #0B2E4F !important;
+
+    border-radius: 7px !important;
+
+    min-height: 44px;
+
+    font-weight: 600 !important;
+}
+
+
+.st-key-view_profile_btn button:hover {
+    border-color: #1597E5 !important;
+
+    color: #1597E5 !important;
+}
+
+
+/* Profile information */
+
+.cc-profile-section {
+    padding: 25px 0 4px;
+}
+
+
+.cc-profile-label {
+    color: #829AB1 !important;
+
+    font-size: 10px !important;
+
+    font-weight: 600 !important;
+
+    letter-spacing: 1.2px;
+
+    margin: 0 0 8px !important;
+}
+
+
+.cc-profile-value {
+    color: #0B2E4F !important;
+
+    font-size: 15px !important;
+
+    font-weight: 600 !important;
+
+    margin: 0 0 3px !important;
+}
+
+
+.cc-profile-detail {
+    color: #829AB1 !important;
+
+    font-size: 12px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================
+   SKILLS
+   ========================================= */
+
+.cc-skill-badges {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+}
+
+
+.cc-skill-badge {
+    background: #F0F5F8;
+
+    color: #31566F;
+
+    border-radius: 4px;
+
+    padding: 5px 10px;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   FEATURE CARDS
+   ========================================= */
+/* =========================================
+   OUR SERVICES
+   ========================================= */
+
+.st-key-dash_services {
+    background: var(--cc-bg) !important;
+
+    padding: 52px 28px !important;
+
+    border-radius: 8px !important;
+
+    margin-top: 28px !important;
+    margin-bottom: 30px !important;
+}
+
+
+/* =========================================
+   SERVICES HEADER
+   ========================================= */
+
+.st-key-dash_services .cc-section-heading {
+    text-align: center;
+
+    margin: 0 0 30px !important;
+}
+
+
+.st-key-dash_services .cc-section-heading h2 {
+    color: var(--cc-primary) !important;
+
+    font-size: 34px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.2 !important;
+
+    margin: 0 0 12px !important;
+}
+
+
+.st-key-dash_services .cc-section-heading p {
+    color: var(--cc-muted) !important;
+
+    font-size: 17px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================
+   SERVICE CARDS
+   Same style as Home
+   ========================================= */
+
+.st-key-dash_service_0,
+.st-key-dash_service_1,
+.st-key-dash_service_2 {
+    background: var(--cc-surface) !important;
+
+    border: 1px solid var(--cc-border) !important;
+
+    border-radius: 12px !important;
+
+    padding: 26px !important;
+
+    box-shadow: 0 1px 2px #0B2E4F05 !important;
+}
+
+
+/* Card title */
+
+.st-key-dash_service_0 h3,
+.st-key-dash_service_1 h3,
+.st-key-dash_service_2 h3 {
+    color: var(--cc-primary) !important;
+
+    font-size: 23px !important;
+
+    margin-bottom: 2px !important;
+}
+
+
+/* Description */
+
+.st-key-dash_service_0 p,
+.st-key-dash_service_1 p,
+.st-key-dash_service_2 p {
+    color: var(--cc-muted) !important;
+
+    font-size: 15px !important;
+
+    line-height: 1.8 !important;
+}
+
+
+/* =========================================
+   SERVICE ICON
+   ========================================= */
+
+.cc-dash-service-icon {
+    width: 52px;
+    height: 52px;
+
+    background: #EDF7FD;
+
+    border-radius: 9px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+}
+
+
+.cc-dash-service-icon img {
+    width: 24px;
+    height: 24px;
+
+    display: block;
+}
+
+
+/* =========================================
+   SERVICE LINKS
+   ========================================= */
+
+[class*="st-key-dash_service_link_"] {
+    margin-top: 16px !important;
+}
+
+
+[class*="st-key-dash_service_link_"] button {
+    background: transparent !important;
+
+    border: none !important;
+    box-shadow: none !important;
+
+    width: auto !important;
+
+    min-height: auto !important;
+    height: auto !important;
+
+    padding: 4px 0 !important;
+
+    color: var(--cc-secondary) !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+
+[class*="st-key-dash_service_link_"] button p {
+    color: var(--cc-secondary) !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+
+    margin: 0 !important;
+}
+
+
+[class*="st-key-dash_service_link_"]
+[data-testid="stIconMaterial"] {
+    color: var(--cc-secondary) !important;
+
+    font-size: 18px !important;
+}
+
+
+/* Hover */
+
+[class*="st-key-dash_service_link_"] button:hover,
+[class*="st-key-dash_service_link_"] button:hover p,
+[class*="st-key-dash_service_link_"] button:hover
+[data-testid="stIconMaterial"] {
+    background: transparent !important;
+
+    color: var(--cc-primary) !important;
+}
+
+/* =========================================
+   FOOTER / SIGN OUT
+   ========================================= */
+
+.st-key-dash_footer {
+    margin-top: 26px;
+}
+
+
+.st-key-signout_btn button {
+    background: transparent !important;
+
+    border: none !important;
+
+    color: #627D98 !important;
+
+    font-size: 13px !important;
+}
+
+
+.st-key-signout_btn button p {
+    color: #627D98 !important;
+}
+
+
+.st-key-signout_btn button:hover,
+.st-key-signout_btn button:hover p {
+    color: #1597E5 !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .stMainBlockContainer {
+        padding: 0 1.5rem 3rem !important;
+    }
+
+
+    .cc-navlinks {
+        gap: 14px;
+
+        overflow-x: auto;
+    }
+
+
+    .cc-navlinks a {
+        font-size: 12px;
+    }
+
+
+    .st-key-dash_hero {
+        padding-top: 30px !important;
+    }
+
+
+    .cc-dashboard-title {
+        font-size: 32px !important;
+    }
+
+
+    .st-key-dash_profile_card {
+        padding: 20px !important;
+    }
+
+
+    .st-key-dash_card_jobs,
+    .st-key-dash_card_freelance,
+    .st-key-dash_card_certs {
+        min-height: auto;
+    }
+
+    .st-key-dash_services {
+    padding: 40px 20px 35px !important;
+    }
+
+    .cc-services-header {
+    margin-bottom: 35px;
+   } 
+
+   .cc-services-header h2 {
+    font-size: 32px !important;
+   }
+
+   .cc-services-header p {
+    font-size: 16px !important;
+   }
+}
+
+
+/* Keep profile card as positioning reference */
+.st-key-dash_profile_card {
+    position: relative !important;
+}
+
+
+/* View profile — top right */
+.st-key-view_profile_btn {
+    position: absolute !important;
+
+    top: 24px !important;
+    right: 24px !important;
+
+    margin: 0 !important;
+
+    z-index: 5 !important;
+}
+
+
+.st-key-view_profile_btn button {
+    min-width: 150px !important;
+}

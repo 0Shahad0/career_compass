@@ -1,0 +1,223 @@
+/* =========================================
+   SHARED NAVBAR
+   ========================================= */
+
+.st-key-dash_nav {
+    position: relative !important;
+
+    min-height: 105px !important;
+
+    padding: 16px 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+
+    background: #FFFFFF !important;
+
+    border-bottom: 1px solid #D9E2EC !important;
+
+    z-index: 1;
+}
+
+
+/* Full-width white navbar */
+
+.st-key-dash_nav::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 50%;
+
+    width: 100vw;
+
+    transform: translateX(-50%);
+
+    background: #FFFFFF;
+
+    border-bottom: 1px solid #D9E2EC;
+
+    z-index: -1;
+}
+
+
+/* =========================================
+   NAV LINKS
+   ========================================= */
+
+.st-key-dash_nav_links {
+    width: 100% !important;
+
+    display: flex !important;
+
+    justify-content: center !important;
+    align-items: center !important;
+
+    gap: 42px !important;
+}
+
+
+.st-key-dash_nav_links button {
+    background: transparent !important;
+
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+
+    box-shadow: none !important;
+
+    color: #627D98 !important;
+
+    font-size: 16px !important;
+    font-weight: 400 !important;
+
+    padding: 20px 0 12px !important;
+
+    min-height: auto !important;
+}
+
+
+.st-key-dash_nav_links button p {
+    color: inherit !important;
+
+    font-size: 16px !important;
+    font-weight: inherit !important;
+
+    margin: 0 !important;
+}
+
+
+.st-key-dash_nav_links button:hover {
+    background: transparent !important;
+
+    color: #1597E5 !important;
+}
+
+
+/* =========================================
+   USER AVATAR
+   ========================================= */
+
+.st-key-user_avatar_btn {
+    display: flex !important;
+
+    justify-content: flex-end !important;
+    align-items: center !important;
+}
+
+
+.st-key-user_avatar_btn button {
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    padding: 0 !important;
+
+    border: none !important;
+
+    border-radius: 50% !important;
+
+    background: #EAF3F8 !important;
+
+    color: #1597E5 !important;
+
+    box-shadow: none !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+
+.st-key-user_avatar_btn button p {
+    color: #1597E5 !important;
+
+    font-size: 15px !important;
+    font-weight: 600 !important;
+
+    margin: 0 !important;
+}
+
+
+.st-key-user_avatar_btn button:hover {
+    background: #DDECF5 !important;
+
+    border: none !important;
+}
+
+
+/* =========================================
+   USER MENU
+   ========================================= */
+
+[data-testid="stDialog"] [role="dialog"] {
+    border-radius: 14px !important;
+
+    padding: 12px !important;
+}
+
+
+[data-testid="stDialog"] h2 {
+    color: #0B2E4F !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    letter-spacing: 2px !important;
+}
+
+
+.user-menu-info h2 {
+    color: #0B2E4F !important;
+
+    font-size: 30px !important;
+    font-weight: 700 !important;
+
+    letter-spacing: -0.5px !important;
+
+    margin: 22px 0 2px !important;
+}
+
+
+.user-menu-info p {
+    color: #627D98 !important;
+
+    font-size: 16px !important;
+
+    margin: 0 0 24px !important;
+}
+
+
+.st-key-dialog_signout button {
+    background: #1597E5 !important;
+
+    border: 1px solid #1597E5 !important;
+
+    color: #FFFFFF !important;
+
+    border-radius: 8px !important;
+
+    font-weight: 600 !important;
+
+    box-shadow: none !important;
+}
+
+
+.st-key-dialog_signout button p {
+    color: #FFFFFF !important;
+}
+
+
+.st-key-dialog_signout button:hover {
+    background: #0B2E4F !important;
+
+    border-color: #0B2E4F !important;
+}

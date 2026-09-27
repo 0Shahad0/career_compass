@@ -1,6 +1,7 @@
 from pathlib import Path
 import requests
 import streamlit as st
+from components.navbar import render_navbar
 
 # =================================
 # Page settings
@@ -28,35 +29,12 @@ if not token:
     if st.button("Sign in", type="primary"):
         st.switch_page("pages/sign_in.py")
     st.stop()
-
-
+    
 # =================================
 # NAVBAR
 # =================================
 
-with st.container(
-    key="freelance_nav",
-    horizontal=True,
-    horizontal_alignment="distribute",
-    vertical_alignment="center"
-):
-    st.image(logo, width=170)
-
-    st.html(
-        """
-        <nav class="cc-navlinks">
-            <a href="#">Dashboard</a>
-            <a href="#">Jobs</a>
-            <a class="active" href="#">Freelance</a>
-            <a href="#">Certifications</a>
-            <a href="#">Profile</a>
-        </nav>
-        """
-    )
-
-    if st.button("<- Dashboard", key="fl_nav_back", type="tertiary"):
-        st.switch_page("pages/dashboard.py")
-
+render_navbar("Freelance")
 
 # =================================
 # HEADER
@@ -500,7 +478,9 @@ if projects:
                     # VIEW PROJECT button -- opens the URL on Freelancer.com
                     with btn_view:
                         if project_url:
-                            st.link_button(
+                            with st.container(key=f"view_project_button_{project_index}"):
+
+                              st.link_button(
                                 "View project",
                                 url=str(project_url),
                                 type="primary",

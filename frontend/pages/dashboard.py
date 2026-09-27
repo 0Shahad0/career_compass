@@ -1,7 +1,8 @@
 from pathlib import Path
 import streamlit as st
 import requests
-
+import base64
+from components.navbar import render_navbar
 
 # ---------------------------------
 # Page settings
@@ -20,7 +21,7 @@ st.set_page_config(
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
 
-st.html(ASSETS / "home.css")
+st.html(ASSETS / "dashboard.css")
 
 logo = ASSETS / "logo.png"
 
@@ -128,41 +129,12 @@ else:
     edu_institution = ""
 
 
+
 # =================================
 # 1. NAVIGATION BAR
 # =================================
 
-with st.container(
-    key="dash_nav",
-    horizontal=True,
-    horizontal_alignment="distribute",
-    vertical_alignment="center"
-):
-    st.image(logo, width=170)
-
-    # Nav links — rendered as styled HTML tabs
-    st.html(
-        """
-        <nav class="cc-navlinks">
-            <a class="active" href="#">Dashboard</a>
-            <a href="#">Jobs</a>
-            <a href="#">Freelance</a>
-            <a href="#">Certifications</a>
-            <a href="#">Profile</a>
-        </nav>
-        """
-    )
-
-    # Avatar circle with initials
-    st.html(
-        f"""
-        <div class="cc-avatar" title="{display_name}">
-            {initials}
-        </div>
-        """
-    )
-
-
+render_navbar("Dashboard")
 # =================================
 # 2. HERO / WELCOME BANNER
 # =================================
@@ -181,16 +153,6 @@ with st.container(key="dash_hero"):
             "Explore career options selected based on your profile."
             "</p>"
         )
-
-    with right:
-        with st.container(horizontal_alignment="right"):
-            if st.button(
-                "Sample profile & recommendations",
-                key="sample_profile_btn",
-                type="secondary"
-            ):
-                pass   # future feature
-
 
 # =================================
 # 3. CAREER PROFILE CARD
@@ -275,70 +237,142 @@ with st.container(
 
 
 # =================================
-# 4. FEATURE CARDS
+# 4. OUR SERVICES
 # =================================
 
-cards = [
-    {
-        "key": "dash_card_jobs",
-        "icon": "description",
-        "title": "Jobs",
-        "description": "Find roles that fit your skills and experience.",
-        "link_label": "View jobs",
-        "page": "pages/jobs.py",
-    },
-    {
-        "key": "dash_card_freelance",
-        "icon": "hub",
-        "title": "Freelance",
-        "description": "Put your expertise to work on the right projects.",
-        "link_label": "View projects",
-        "page": "pages/freelance.py",
-    },
-    {
-        "key": "dash_card_certs",
-        "icon": "menu_book",
-        "title": "Certifications",
-        "description": "Make your next qualification a clear, achievable plan.",
-        "link_label": "Create study plan",
-        "page": "pages/certifications.py",
-    },
-]
+with st.container(
+    key="dash_services"
+):
 
-cols = st.columns(3, gap="medium")
+    # Section title
+    st.html(
+        """
+        <div class="cc-section-heading">
+            <h2>Our Services</h2>
+            <p>
+                Everything you need to advance
+                your career in one place
+            </p>
+        </div>
+        """
+    )
 
-for i, card in enumerate(cards):
-    with cols[i]:
-        with st.container(
-            border=True,
-            key=card["key"],
-            height="stretch"
-        ):
-            # Icon
+    services = [
+        {
+            "title": "Jobs",
+            "description": (
+                "Discover full-time and remote positions "
+                "matched to your skills, experience, "
+                "and career profile."
+            ),
+            "link_label": "View jobs",
+            "page": "pages/jobs.py",
+        },
+        {
+            "title": "Freelance",
+            "description": (
+                "Find freelance projects that fit your "
+                "expertise, showcase your strengths, "
+                "and grow your professional experience."
+            ),
+            "link_label": "View projects",
+            "page": "pages/freelance.py",
+        },
+        {
+            "title": "Certifications",
+            "description": (
+                "Prepare for your next certification "
+                "with a personalized study plan tailored "
+                "to your level and exam timeline."
+            ),
+            "link_label": "Create study plan",
+            "page": "pages/certifications.py",
+        },
+    ]
+
+    icon_paths = {
+        "Jobs": (
+            '<rect x="3" y="7" width="18" height="14" rx="2"/>'
+            '<path d="M8 7V3h8v4M8 7v14M16 7v14"/>'
+        ),
+        "Freelance": (
+            '<rect x="3" y="6" width="18" height="15" rx="2"/>'
+            '<path d="M8 6V3h8v3M8 12v3M12 10v7M16 12v3"/>'
+        ),
+        "Certifications": (
+            '<circle cx="12" cy="8" r="6"/>'
+            '<path d="m8 13-2 9 6-3 6 3-2-9"/>'
+        ),
+    }
+
+    columns = st.columns(
+        3,
+        gap="medium"
+    )
+
+    for i in range(3):
+
+        service = services[i]
+
+        with columns[i]:
+
             with st.container(
-                key=f"dash_card_icon_{i}",
-                width=40
+                border=True,
+                key=f"dash_service_{i}",
+                height="stretch"
             ):
-                st.markdown(f":material/{card['icon']}:")
 
-            st.subheader(card["title"])
+                # Icon
+                svg = f"""
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="#1597E5"
+                     stroke-width="1.7"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    {icon_paths[service["title"]]}
+                </svg>
+                """
 
-            st.write(card["description"])
+                encoded_icon = base64.b64encode(
+                    svg.encode("utf-8")
+                ).decode("ascii")
 
-            if st.button(
-                card["link_label"],
-                key=f"dash_card_btn_{i}",
-                type="tertiary",
-                icon=":material/arrow_outward:"
-            ):
-                if card.get("page"):
-                    st.switch_page(card["page"])
-                else:
-                    st.info(
-                        f"{card['title']} is coming soon. "
-                        "Your profile is ready!"
+                st.html(
+                    f"""
+                    <div class="cc-dash-service-icon">
+                        <img
+                            src="data:image/svg+xml;base64,{encoded_icon}"
+                            alt=""
+                            width="24"
+                            height="24"
+                        >
+                    </div>
+                    """
+                )
+
+                # Text
+                st.subheader(
+                    service["title"]
+                )
+
+                st.write(
+                    service["description"]
+                )
+
+                # Keep dashboard link
+                if st.button(
+                    service["link_label"],
+                    key=f"dash_service_link_{i}",
+                    type="tertiary",
+                    icon=":material/arrow_outward:"
+                ):
+                    st.switch_page(
+                        service["page"]
                     )
-
 
 # =================================
 # 5. SIGN OUT (footer area)
