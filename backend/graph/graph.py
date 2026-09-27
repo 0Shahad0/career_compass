@@ -5,6 +5,7 @@ from langgraph.graph import (
 )
 
 from langgraph.types import Send
+from langsmith import traceable
 
 from backend.graph.state import CareerState
 
@@ -35,7 +36,7 @@ from backend.agents.freelance_agent import freelance_agent
 # The graph will still continue to synthesis.
 # =========================================================
 
-
+@traceable(name="job_agent", tags=["job-agent"])
 def safe_job_agent(
     state: CareerState,
 ) -> dict:

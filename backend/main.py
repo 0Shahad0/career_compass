@@ -124,7 +124,6 @@ def career_assistant(
     }
 
     result = career_graph.invoke(initial_state)
-    result = career_graph.invoke(initial_state)
     print("\n================ GRAPH RESULT ================")
     print(result)
     print("================================================\n")
