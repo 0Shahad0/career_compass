@@ -42,3 +42,4 @@ freelancersdk
 datasets
 instructor>=1.17.0
 ragas==0.3.9
+langsmith

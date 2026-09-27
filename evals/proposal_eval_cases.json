@@ -1,0 +1,131 @@
+[
+  {
+    "id": "strong_profile_good_match",
+    "description": "Developer with solid Python/ML skills — proposal should be highly personalised.",
+    "profile": {
+      "schema_version": "1.0",
+      "personal_information": {"name": "Ali Hassan", "location": "Riyadh, Saudi Arabia"},
+      "professional_summary": "Full-stack developer with 3 years building Python APIs and React frontends. Completed a RAG chatbot project for a local startup.",
+      "education": [{"institution": "KFUPM", "degree": "Bachelor", "field_of_study": "Computer Science"}],
+      "experience": [
+        {
+          "title": "Backend Developer",
+          "company": "FinTech Startup",
+          "description": "Built Python FastAPI microservices handling 10k daily requests. Integrated OpenAI for automated document processing."
+        }
+      ],
+      "skills": [
+        {"name": "Python"}, {"name": "FastAPI"}, {"name": "React"},
+        {"name": "OpenAI API"}, {"name": "SQL"}, {"name": "LangChain"}
+      ],
+      "certifications": [],
+      "projects": [
+        {
+          "name": "RAG Document Assistant",
+          "technologies": ["Python", "LangChain", "OpenAI", "FAISS"],
+          "description": "Built a retrieval-augmented chatbot over internal company PDFs, reducing support ticket volume by 40%."
+        }
+      ],
+      "languages": [],
+      "professional_links": [],
+      "achievements": [],
+      "volunteering": [],
+      "review_status": "approved"
+    },
+    "project_title": "Build a RAG chatbot for internal HR documents",
+    "project_description": "We need a chatbot that can answer employee questions about company policies using our existing PDF documents. Must use OpenAI and return cited answers.",
+    "budget_or_rate": "$500 - $1000 fixed",
+    "matching_skills": ["Python", "LangChain", "OpenAI API"],
+    "missing_skills": [],
+    "reference": "The proposal should open with a specific hook mentioning the user's RAG chatbot project. It should cite the 40% reduction in support tickets as concrete proof. It should name LangChain and OpenAI as the tools. It should end with a clear, low-pressure call to action."
+  },
+  {
+    "id": "weak_empty_profile",
+    "description": "Profile has no skills or projects — agent should not fabricate experience.",
+    "profile": {
+      "schema_version": "1.0",
+      "personal_information": {"name": "Test User", "location": "Saudi Arabia"},
+      "professional_summary": null,
+      "education": [],
+      "experience": [],
+      "skills": [],
+      "certifications": [],
+      "projects": [],
+      "languages": [],
+      "professional_links": [],
+      "achievements": [],
+      "volunteering": [],
+      "review_status": "approved"
+    },
+    "project_title": "Django backend for e-commerce store",
+    "project_description": "Need a developer to build a Django backend with REST APIs for an online store.",
+    "budget_or_rate": "$300 fixed",
+    "matching_skills": [],
+    "missing_skills": ["Django", "REST API", "PostgreSQL"],
+    "reference": "With no profile information, the proposal should be generic and honest. It must NOT invent past projects, specific skills, or quantified achievements the user never mentioned. Any references to skills should only be about willingness to learn or general aptitude."
+  },
+  {
+    "id": "partial_skill_match",
+    "description": "Some skills match, some are missing — proposal should acknowledge gaps honestly.",
+    "profile": {
+      "schema_version": "1.0",
+      "personal_information": {"name": "Sara Al-Rashid", "location": "Jeddah, Saudi Arabia"},
+      "professional_summary": "Frontend developer with React and JavaScript experience. New to backend development.",
+      "education": [{"institution": "KAU", "degree": "Bachelor", "field_of_study": "Information Systems"}],
+      "experience": [
+        {
+          "title": "Frontend Developer",
+          "company": "Design Agency",
+          "description": "Built React dashboards and data visualisation components for 5 client projects."
+        }
+      ],
+      "skills": [
+        {"name": "React"}, {"name": "JavaScript"}, {"name": "CSS"}, {"name": "Figma"}
+      ],
+      "certifications": [],
+      "projects": [
+        {
+          "name": "Sales Analytics Dashboard",
+          "technologies": ["React", "Chart.js"],
+          "description": "Interactive dashboard for a retail client showing real-time sales data."
+        }
+      ],
+      "languages": [],
+      "professional_links": [],
+      "achievements": [],
+      "volunteering": [],
+      "review_status": "approved"
+    },
+    "project_title": "React frontend + Node.js backend for inventory management",
+    "project_description": "Need a full-stack developer for React UI and a Node.js REST API for product inventory.",
+    "budget_or_rate": "$400 fixed",
+    "matching_skills": ["React", "JavaScript"],
+    "missing_skills": ["Node.js", "REST API"],
+    "reference": "The proposal should strongly emphasise the React and dashboard experience. It should honestly acknowledge Node.js as a gap, perhaps by offering to learn quickly or proposing a frontend-only scope. It should NOT pretend the user has Node.js experience."
+  },
+  {
+    "id": "refinement_make_shorter",
+    "description": "Tests that the chat endpoint respects a user request to shorten the proposal.",
+    "profile": {
+      "schema_version": "1.0",
+      "personal_information": {"name": "Omar Al-Farsi", "location": "Riyadh, Saudi Arabia"},
+      "professional_summary": "Data scientist with Python and ML expertise.",
+      "education": [],
+      "experience": [{"title": "Data Scientist", "company": "Analytics Corp", "description": "Built ML models for demand forecasting."}],
+      "skills": [{"name": "Python"}, {"name": "Machine Learning"}, {"name": "Pandas"}],
+      "certifications": [],
+      "projects": [],
+      "languages": [],
+      "professional_links": [],
+      "achievements": [],
+      "volunteering": [],
+      "review_status": "approved"
+    },
+    "project_title": "Demand forecasting model for retail chain",
+    "project_description": "Build an ML demand forecasting model for a chain of 50 retail stores using historical sales data.",
+    "budget_or_rate": "$800 fixed",
+    "matching_skills": ["Python", "Machine Learning", "Pandas"],
+    "missing_skills": [],
+    "reference": "A shortened version of the original proposal. Still must contain the hook, proof, and close structure. Should be under 150 words. Must not remove the call to action."
+  }
+]

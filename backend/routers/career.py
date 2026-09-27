@@ -28,6 +28,15 @@ from backend.agents.certification_agent2 import (
 # generate_proposal() creates the first draft; chat_with_proposal()
 # handles follow-up refinement messages from the user.
 from backend.agents.proposal_agent import generate_proposal, chat_with_proposal
+
+# Import proposal guardrails.
+# validate_proposal_request() checks the project title/description before generation.
+# validate_chat_message() checks every new user message before the refinement call.
+# Both raise ValueError with a user-facing reason if the request is off-topic.
+from backend.guardrails.proposal_guardrails import (
+    validate_proposal_request,
+    validate_chat_message,
+)
 from backend.schemas.career_response import CVTailoringResponse
 
 router = APIRouter(
@@ -274,6 +283,19 @@ def get_proposal(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    # ── Guardrail: block off-topic requests before touching the LLM ──────────
+    # This runs a fast LLM classifier (gpt-4o-mini) that verifies the project
+    # title and description are genuinely about a freelance project proposal.
+    # Off-topic requests (homework, general chat, etc.) are rejected here with
+    # HTTP 422 so the expensive proposal agent never runs.
+    try:
+        validate_proposal_request(
+            project_title=request.project_title,
+            project_description=request.project_description,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
     # Load the user's full profile — this is the same profile object
     # used by all other agents. It contains skills, experience, projects.
     profile = load_agent_profile(user_id, session)
@@ -332,6 +354,20 @@ def refine_proposal(
     user = get_user(session, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
+    # ── Guardrail: check the latest user message before refinement ────────────
+    # We only validate the last user message, not the entire history.
+    # Earlier turns were already validated when they were sent.
+    # If the user tries to use the chat for off-topic purposes (e.g. asking
+    # general questions or injecting unrelated requests), we block here.
+    last_user_message = next(
+        (msg.content for msg in reversed(request.messages) if msg.role == "user"),
+        "",
+    )
+    try:
+        validate_chat_message(last_user_message)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
 
     profile = load_agent_profile(user_id, session)
 
