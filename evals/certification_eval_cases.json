@@ -1,0 +1,163 @@
+[
+  {
+    "id": "cloud_engineer_aws",
+    "description": "Software engineer wants cloud certifications — strong AWS alignment expected.",
+    "state": {
+      "user_profile": {
+        "schema_version": "1.0",
+        "personal_information": {
+          "name": "Test User",
+          "location": "Saudi Arabia"
+        },
+        "professional_summary": "Backend developer with 2 years of Python and AWS experience. Wants to move into cloud engineering.",
+        "education": [
+          {
+            "institution": "Test University",
+            "degree": "Bachelor",
+            "field_of_study": "Computer Science"
+          }
+        ],
+        "experience": [
+          {
+            "title": "Backend Developer",
+            "company": "Tech Startup",
+            "description": "Built Python microservices deployed on AWS EC2 and Lambda."
+          }
+        ],
+        "skills": [
+          {"name": "Python"},
+          {"name": "AWS"},
+          {"name": "Docker"},
+          {"name": "SQL"}
+        ],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "professional_links": [],
+        "achievements": [],
+        "volunteering": [],
+        "review_status": "approved"
+      },
+      "query": "Recommend certifications to advance my cloud engineering career."
+    },
+    "reference": "The response should recommend AWS certifications such as AWS Certified Solutions Architect Associate (SAA-C03) or AWS Certified Developer Associate. It should connect the recommendations to the user's existing AWS and Python skills. Missing skills like Terraform or Kubernetes should be mentioned as gaps.",
+    "must_include": ["AWS", "SAA", "certification"],
+    "must_not_include": ["Google Cloud", "Azure", "invented cert"]
+  },
+  {
+    "id": "data_analyst_no_certs",
+    "description": "Data analyst with no current certifications wants structured learning path.",
+    "state": {
+      "user_profile": {
+        "schema_version": "1.0",
+        "personal_information": {
+          "name": "Test User",
+          "location": "Saudi Arabia"
+        },
+        "professional_summary": "Junior data analyst with SQL and Excel experience. No certifications yet.",
+        "education": [
+          {
+            "institution": "Test University",
+            "degree": "Bachelor",
+            "field_of_study": "Business Administration"
+          }
+        ],
+        "experience": [
+          {
+            "title": "Data Analyst Intern",
+            "company": "Retail Company",
+            "description": "Prepared weekly sales reports using SQL and Excel."
+          }
+        ],
+        "skills": [
+          {"name": "SQL"},
+          {"name": "Excel"},
+          {"name": "Power BI"}
+        ],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "professional_links": [],
+        "achievements": [],
+        "volunteering": [],
+        "review_status": "approved"
+      },
+      "query": "What certifications should I get to grow as a data analyst?"
+    },
+    "reference": "The response should recommend data analytics certifications such as Microsoft PL-300 (Power BI Data Analyst) or Google Data Analytics Certificate. It should recognise the user's SQL and Power BI skills and suggest a realistic progression path without inventing skills the user does not have.",
+    "must_include": ["SQL", "Power BI", "certification"],
+    "must_not_include": ["AWS", "deep learning", "invented cert"]
+  },
+  {
+    "id": "empty_profile_certification",
+    "description": "Profile has no skills or experience — agent must not hallucinate personalised recommendations.",
+    "state": {
+      "user_profile": {
+        "schema_version": "1.0",
+        "personal_information": {
+          "name": "Test User",
+          "location": "Saudi Arabia"
+        },
+        "professional_summary": null,
+        "education": [],
+        "experience": [],
+        "skills": [],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "professional_links": [],
+        "achievements": [],
+        "volunteering": [],
+        "review_status": "approved"
+      },
+      "query": "What certifications should I pursue?"
+    },
+    "reference": "With no profile information available, the agent should not fabricate a personalised recommendation. It may offer general guidance or ask the user to provide their background. It should not claim to match certifications to skills the user has not provided.",
+    "must_include": ["profile", "information"],
+    "must_not_include": ["Python", "AWS", "you have strong skills in"]
+  },
+  {
+    "id": "cybersecurity_career_switch",
+    "description": "IT support professional wants to switch into cybersecurity — needs entry-level certs.",
+    "state": {
+      "user_profile": {
+        "schema_version": "1.0",
+        "personal_information": {
+          "name": "Test User",
+          "location": "Saudi Arabia"
+        },
+        "professional_summary": "IT support specialist with 3 years of experience. Wants to transition into cybersecurity.",
+        "education": [
+          {
+            "institution": "Test College",
+            "degree": "Diploma",
+            "field_of_study": "Information Technology"
+          }
+        ],
+        "experience": [
+          {
+            "title": "IT Support Specialist",
+            "company": "Enterprise Corp",
+            "description": "Managed Windows workstations, troubleshot network issues, and handled help-desk tickets."
+          }
+        ],
+        "skills": [
+          {"name": "Windows Administration"},
+          {"name": "Networking"},
+          {"name": "Troubleshooting"}
+        ],
+        "certifications": [],
+        "projects": [],
+        "languages": [],
+        "professional_links": [],
+        "achievements": [],
+        "volunteering": [],
+        "review_status": "approved"
+      },
+      "query": "I want to switch into cybersecurity. What certifications should I start with?"
+    },
+    "reference": "The response should recommend entry-level cybersecurity certifications such as CompTIA Security+ or CompTIA Network+. It should connect to the user's existing networking and Windows skills. It should provide a logical learning path from IT support toward cybersecurity.",
+    "must_include": ["Security+", "CompTIA", "networking"],
+    "must_not_include": ["CISSP", "invented cert", "you already have cybersecurity skills"]
+  }
+]
