@@ -15,7 +15,7 @@ client = OpenAI(
     api_key=settings.openai_api_key
 )
 
-PORTFOLIO_MODEL = "gpt-5.6"
+PORTFOLIO_MODEL = "gpt-4.1-mini"
 
 
 class PortfolioHTMLParser(HTMLParser):
