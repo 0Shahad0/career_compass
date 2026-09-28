@@ -1,7 +1,7 @@
 from pathlib import Path
 import streamlit as st
 import requests
-
+from components.navbar import render_navbar
 # ---------------------------------
 # Page settings
 # ---------------------------------
@@ -34,32 +34,7 @@ if not token:
 # NAVBAR
 # =================================
 
-with st.container(
-    key="jobs_nav",
-    horizontal=True,
-    horizontal_alignment="distribute",
-    vertical_alignment="center"
-):
-    st.image(logo, width=170)
-
-    st.html(
-        """
-        <nav class="cc-navlinks">
-            <a href="#" onclick="window.location.href='?page=dashboard'">Dashboard</a>
-            <a class="active" href="#">Jobs</a>
-            <a href="#">Freelance</a>
-            <a href="#">Certifications</a>
-            <a href="#">Profile</a>
-        </nav>
-        """
-    )
-
-    col_nav_dash, col_nav_blank = st.columns([1, 4])
-    with col_nav_dash:
-        if st.button("← Dashboard", key="nav_back_dash", type="tertiary"):
-            st.switch_page("pages/dashboard.py")
-
-
+render_navbar("Jobs")
 # =================================
 # HEADER
 # =================================
@@ -77,13 +52,7 @@ with st.container(key="jobs_hero"):
             "</p>"
         )
 
-    with right:
-        with st.container(horizontal_alignment="right"):
-            st.button(
-                "Sample profile & recommendations",
-                key="jobs_sample_btn",
-                type="secondary"
-            )
+
 
 
 # =================================
@@ -623,8 +592,9 @@ for i, job in enumerate(jobs):
         with footer_right:
 
             if job_url:
+                with st.container(key=f"view_job_button_{i}"):
 
-                st.link_button(
+                   st.link_button(
                     "View Job ↗",
                     url=str(job_url),
                     type="primary",

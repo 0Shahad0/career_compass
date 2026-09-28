@@ -1,6 +1,7 @@
 from pathlib import Path
-import streamlit as st
+
 import requests
+import streamlit as st
 
 
 # ---------------------------------
@@ -10,7 +11,7 @@ import requests
 st.set_page_config(
     page_title="Create Account | CareerCompass",
     page_icon="🧭",
-    layout="wide"
+    layout="wide",
 )
 
 
@@ -20,156 +21,267 @@ st.set_page_config(
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
 
-st.html(ASSETS / "home.css")
-
-logo = ASSETS / "logo.png"
+st.html(ASSETS / "sign-up.css")
 
 API_BASE = "http://127.0.0.1:8000"
 
 
-# ---------------------------------
-# Page layout
-# ---------------------------------
+# =================================
+# SIGN UP PAGE
+# =================================
 
-left, center, right = st.columns(
-    [1, 1.3, 1]
-)
+with st.container(key="signup_shell"):
 
-
-with center:
-
-    # Logo
-    st.image(
-        logo,
-        width=180
-    )
-
-    # Title
-    st.title(
-        "Create your account"
-    )
-
-    st.write(
-        "Start your CareerCompass journey."
+    left, right = st.columns(
+        [1, 1],
+        gap=None,
+        vertical_alignment="center",
     )
 
 
-    # ---------------------------------
-    # Form
-    # ---------------------------------
+    # =================================
+    # LEFT SIDE
+    # =================================
 
-    email = st.text_input(
-        "Email"
-    )
+    with left:
 
-    password = st.text_input(
-        "Password",
-        type="password"
-    )
+        with st.container(key="signup_left"):
 
-    confirm_password = st.text_input(
-        "Confirm password",
-        type="password"
-    )
+            st.html(
+                """
+                <div class="signup-left-content">
 
+                    <p class="signup-eyebrow">
+                        A CAREER THAT FITS YOU
+                    </p>
 
-    # ---------------------------------
-    # Create account button
-    # ---------------------------------
+                    <h1 class="signup-main-title">
+                        Good opportunities<br>
+                        start with your story.
+                    </h1>
 
-    if st.button(
-        "Create Account",
-        type="primary",
-        use_container_width=True
-    ):
+                    <p class="signup-description">
+                        Bring your experience.
+                        Discover where it can take you next.
+                    </p>
 
-        # Check empty fields
-        if (
-            not email
-            or not password
-            or not confirm_password
-        ):
-            st.warning(
-                "Please complete all fields."
+                </div>
+                """
             )
 
-        # Check passwords
-        elif password != confirm_password:
-            st.error(
-                "Passwords do not match."
+
+    # =================================
+    # RIGHT SIDE
+    # =================================
+
+    with right:
+
+        with st.container(key="signup_right"):
+
+            # Back to home
+            if st.button(
+                "",
+                icon=":material/arrow_back:",
+                key="back_home_signup",
+                type="tertiary",
+            ):
+                st.switch_page("app.py")
+
+
+            st.html(
+                """
+                <div class="signup-form-heading">
+
+                    <p class="signup-eyebrow">
+                        WELCOME TO CAREERCOMPASS
+                    </p>
+
+                    <h2>
+                        Start your next chapter.
+                    </h2>
+
+                    <p>
+                        Create an account to find your direction.
+                    </p>
+
+                </div>
+                """
             )
 
-        elif len(password) < 8:
-            st.error(
-                "Password must be at least 8 characters."
+
+            # ---------------------------------
+            # Form
+            # ---------------------------------
+
+            full_name = st.text_input(
+                "Full name",
+                placeholder="Alex Morgan",
             )
 
-        # Everything is correct — call register API
-        else:
-            try:
-                with st.spinner("Creating your account..."):
-                    response = requests.post(
-                        f"{API_BASE}/api/auth/register",
-                        json={
-                            "email": email,
-                            "password": password,
-                        },
-                        timeout=15,
+            email = st.text_input(
+                "Email address",
+                placeholder="you@example.com",
+            )
+
+            password = st.text_input(
+                "Password",
+                type="password",
+                placeholder="At least 8 characters",
+            )
+
+            confirm_password = st.text_input(
+                "Confirm password",
+                type="password",
+            )
+
+
+            # ---------------------------------
+            # Create account
+            # ---------------------------------
+
+            if st.button(
+                "Create account",
+                type="primary",
+                use_container_width=True,
+                key="signup_create_account",
+            ):
+
+                if (
+                    not full_name
+                    or not email
+                    or not password
+                    or not confirm_password
+                ):
+                    st.warning(
+                        "Please complete all fields."
                     )
 
-                if response.status_code == 201:
-                    data = response.json()
+                elif password != confirm_password:
+                    st.error(
+                        "Passwords do not match."
+                    )
 
-                    # Store auth token and user email
-                    st.session_state["token"] = data["access_token"]
-                    st.session_state["user_email"] = email
-
-                    # Go to CV upload page
-                    st.switch_page("pages/upload_cv.py")
-
-                elif response.status_code == 400:
-                    detail = response.json().get("detail", "")
-                    if "already registered" in detail:
-                        st.error(
-                            "An account with this email already exists. "
-                            "Please sign in instead."
-                        )
-                    else:
-                        st.error(f"Registration failed: {detail}")
-
-                elif response.status_code == 422:
-                    st.error("Please enter a valid email address.")
+                elif len(password) < 8:
+                    st.error(
+                        "Password must be at least 8 characters."
+                    )
 
                 else:
-                    st.error(
-                        f"Registration failed (status {response.status_code}). "
-                        "Please try again."
+                    try:
+
+                        with st.spinner(
+                            "Creating your account..."
+                        ):
+
+                            response = requests.post(
+                                f"{API_BASE}/api/auth/register",
+                                json={
+                                    "email": email,
+                                    "password": password,
+                                },
+                                timeout=15,
+                            )
+
+
+                        if response.status_code == 201:
+
+                            data = response.json()
+
+                            st.session_state["token"] = (
+                                data["access_token"]
+                            )
+
+                            st.session_state["user_email"] = email
+
+                            # Keep the name locally for now.
+                            # Do not send it to the API unless
+                            # the backend register schema supports it.
+                            st.session_state["full_name"] = full_name
+
+                            st.switch_page(
+                                "pages/upload_cv.py"
+                            )
+
+
+                        elif response.status_code == 400:
+
+                            detail = (
+                                response
+                                .json()
+                                .get("detail", "")
+                            )
+
+                            if "already registered" in detail:
+
+                                st.error(
+                                    "An account with this email "
+                                    "already exists. "
+                                    "Please sign in instead."
+                                )
+
+                            else:
+
+                                st.error(
+                                    f"Registration failed: {detail}"
+                                )
+
+
+                        elif response.status_code == 422:
+
+                            st.error(
+                                "Please enter a valid email address."
+                            )
+
+
+                        else:
+
+                            st.error(
+                                "Registration failed "
+                                f"(status {response.status_code}). "
+                                "Please try again."
+                            )
+
+
+                    except requests.Timeout:
+
+                        st.error(
+                            "The server is taking too long "
+                            "to respond. Please try again."
+                        )
+
+
+                    except requests.RequestException as e:
+
+                        st.error(
+                            "Could not connect to "
+                            f"CareerCompass API: {e}"
+                        )
+
+
+            # ---------------------------------
+            # Sign in
+            # ---------------------------------
+
+            with st.container(
+                key="signup_signin_row",
+                horizontal=True,
+                horizontal_alignment="center",
+                vertical_alignment="center",
+            ):
+
+                st.html(
+                    """
+                      <span class="signup-login-text">
+                      Already have an account?
+                     </span>
+                   """
+                  )
+
+                if st.button(
+                    "Sign in",
+                    type="tertiary",
+                    key="signup_signin",
+                ):
+                    st.switch_page(
+                        "pages/sign_in.py"
                     )
-
-            except requests.Timeout:
-                st.error(
-                    "The server is taking too long to respond. "
-                    "Please try again."
-                )
-
-            except requests.RequestException as e:
-                st.error(
-                    f"Could not connect to CareerCompass API: {e}"
-                )
-
-
-    # ---------------------------------
-    # Sign in link
-    # ---------------------------------
-
-    st.divider()
-
-    st.write(
-        "Already have an account?"
-    )
-
-    if st.button(
-        "Sign in",
-        use_container_width=True
-    ):
-        st.switch_page("pages/sign_in.py")

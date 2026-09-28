@@ -30,8 +30,9 @@ UNAVAILABLE = "Not available in the dataset."
 
 # A starting policy for text-embedding-3-small, NOT a probability or a
 # calibrated accuracy claim. Validate on labelled profiles before tuning.
-# Keep the existing floor; fix role validation rather than tuning scores.
+# Apply independent full-text and career-evidence floors before reranking.
 MIN_SEMANTIC_SIMILARITY = 0.30
+MIN_CAREER_SIMILARITY = 0.30
 VALIDATION_BATCH_SIZE = 16
 
 logger = logging.getLogger(__name__)
@@ -178,6 +179,17 @@ def _candidate_text(exam: dict) -> str:
     )
 
 
+def _career_track_text(exam: dict) -> str:
+    # Syllabus topics can be shared across unrelated careers. Only these
+    # source fields describe the certification's professional direction.
+    return "\n".join(_unique([
+        exam.get("exam_name"),
+        exam.get("certification_name"),
+        _descriptive_text(exam.get("target_audience")),
+        _descriptive_text(exam.get("recommended_experience")),
+    ]))
+
+
 # These are role designations, not certification/vendor lists or career paths.
 # They locate an explicit specialization; they never prove profile suitability.
 _SPECIALIST_ROLE = re.compile(
@@ -236,17 +248,13 @@ def _role_documents(exam: dict) -> tuple[str, str, str]:
 
     # Recommended experience describes the role, not a mandatory number of
     # years. It is never independently used as an eligibility hard filter.
-    actual = "\n".join(filter(None, (
-        title,
-        audience,
-        _descriptive_text(exam.get("recommended_experience")),
-    )))
+    actual = _career_track_text(exam)
     neutral = _SPECIALIST_ROLE.sub("professional", actual)
 
     return actual, neutral, role_anchor
 
 
-def _profile_role_evidence(profile_text: str) -> list[str]:
+def _profile_career_evidence(profile_text: str) -> tuple[list[str], list[str]]:
     """Use structured E/E/S evidence without requiring an exact job title.
 
     A relevant qualification or explicit skill can support a career change.
@@ -281,7 +289,12 @@ def _profile_role_evidence(profile_text: str) -> list[str]:
         if _normalize_match_text(skill) not in _TRANSFERABLE_SKILLS
     ]
 
-    evidence.extend(skills)
+    return _unique(evidence), skills
+
+
+def _profile_role_evidence(profile_text: str) -> list[str]:
+    background, skills = _profile_career_evidence(profile_text)
+    evidence = background + skills
     if skills:
         evidence.append(
             "Professional skills: " + "; ".join(skills)
@@ -316,23 +329,42 @@ def _validate_batch(
     profile_text: str,
     batch: list[dict],
 ) -> list[dict]:
-    """Apply a role-support veto without reranking.
+    """Require semantic relevance and corroborated career alignment.
 
-    Domains already support rich-text retrieval. Domain counts, weights and
-    domain-match percentages have no independent acceptance role here.
+    Every candidate has a career gate; the specialist veto is additional.
+    One matching skill cannot independently establish a career direction.
     """
+    background, skills = _profile_career_evidence(profile_text)
+    if not background and not skills:
+        return []
+
+    career_text = "\n".join(_unique(background + skills))
     evidence = _profile_role_evidence(profile_text)
-    documents = [profile_text, *evidence]
-    evidence_end = len(documents)
+    # Cache profile evidence separately so every validation batch reuses it.
+    profile_vectors = _validation_embeddings(tuple([
+        profile_text, career_text, *background, *skills, *evidence,
+    ]))
+    profile_vector, career_vector = profile_vectors[:2]
+    background_end = 2 + len(background)
+    skills_end = background_end + len(skills)
+    background_vectors = profile_vectors[2:background_end]
+    skill_vectors = profile_vectors[background_end:skills_end]
+    evidence_vectors = profile_vectors[skills_end:]
+    documents = []
     positions = []
 
     for exam in batch:
+        retrieval_score = _number(exam.get("_retrieval_score"))
+        if retrieval_score is None or retrieval_score < MIN_SEMANTIC_SIMILARITY:
+            continue
+
         core, actual, neutral, role_anchor = _validation_documents(exam)
-        if not core:
+        career = _career_track_text(exam)
+        if not core or not career:
             continue
 
         core_position = len(documents)
-        documents.append(core)
+        documents.extend([core, career])
         role_position = None
 
         if actual:
@@ -347,8 +379,6 @@ def _validate_batch(
         return []
 
     vectors = _validation_embeddings(tuple(documents))
-    profile_vector = vectors[0]
-    evidence_vectors = vectors[1:evidence_end]
     accepted = []
 
     for exam, core_position, role_position in positions:
@@ -359,6 +389,28 @@ def _validate_batch(
             not math.isfinite(core_similarity)
             or core_similarity < MIN_SEMANTIC_SIMILARITY
         ):
+            continue
+
+        track_vector = vectors[core_position + 1]
+        career_similarity = float(track_vector @ career_vector)
+        background_scores = [float(track_vector @ v) for v in background_vectors]
+        skill_scores = sorted(
+            (float(track_vector @ v) for v in skill_vectors), reverse=True,
+        )
+        if not all(math.isfinite(value) for value in (
+            career_similarity, *background_scores, *skill_scores,
+        )):
+            continue
+
+        # A qualification/title may support a track directly. Alternatively,
+        # two distinct explicit skills can support an emerging career path.
+        # Never use the best single skill as standalone career evidence.
+        support = max(
+            max(background_scores, default=0.0),
+            skill_scores[1] if len(skill_scores) >= 2 else 0.0,
+        )
+        career_alignment = min(career_similarity, support)
+        if career_alignment < MIN_CAREER_SIMILARITY:
             continue
 
         if role_position is not None:
@@ -393,7 +445,7 @@ def _validate_batch(
             if not supported:
                 continue
 
-        accepted.append(exam)
+        accepted.append({**exam, "_career_alignment": career_alignment})
 
     return accepted
 
@@ -526,6 +578,10 @@ def get_candidate_certifications(
 
     owned = _owned_identities(profile, ranked)
     skills = _skill_names(profile)
+    professional_skills = [
+        skill for skill in skills
+        if _normalize_match_text(skill) not in _TRANSFERABLE_SKILLS
+    ]
     selected, batch, seen = [], [], set()
 
     def consume(items):
@@ -544,10 +600,19 @@ def get_candidate_certifications(
             candidate["_required_prerequisites"] = (
                 _required_prerequisites(exam)
             )
+            overlap = sum(
+                skill in candidate["_grounded_matching_skills"]
+                for skill in professional_skills
+            ) / max(1, len(professional_skills))
+            # Fixed policy weights, not probabilities. Career alignment has
+            # equal influence to retrieval; exact overlap is a small bonus
+            # only AFTER both relevance gates and credential checks pass.
+            candidate["_relevance_score"] = (
+                0.45 * min(1.0, exam["_retrieval_score"])
+                + 0.45 * min(1.0, exam["_career_alignment"])
+                + 0.10 * overlap
+            )
             selected.append(candidate)
-
-            if len(selected) == MAX_RECOMMENDATIONS:
-                break
 
     for exam in ranked:
         if (
@@ -574,13 +639,38 @@ def get_candidate_certifications(
         if len(batch) == VALIDATION_BATCH_SIZE:
             consume(batch)
             batch = []
-            if len(selected) == MAX_RECOMMENDATIONS:
-                break
 
-    if batch and len(selected) < MAX_RECOMMENDATIONS:
+    if batch:
         consume(batch)
 
-    return selected
+    # Validate and rerank the full eligible pool before imposing the cap.
+    # Stable identity tie-breaks make order independent of retrieval ties.
+    selected.sort(key=lambda exam: (
+        -exam["_relevance_score"],
+        -exam["_career_alignment"],
+        -exam["_retrieval_score"],
+        _normalize_match_text(exam["exam_id"]),
+    ))
+    # Normalize only for display.
+# The highest-ranked certification becomes 100.
+# This does NOT change ranking and is NOT a match probability.
+    if selected:
+        highest_relevance = max(
+          exam["_relevance_score"]
+          for exam in selected
+    )
+
+        for exam in selected:
+            exam["_display_relevance_score"] = (
+            round(
+                100
+                * exam["_relevance_score"]
+                / highest_relevance
+            )
+            if highest_relevance > 0
+            else 0
+        )
+    return selected[:MAX_RECOMMENDATIONS]
 
 
 def _pagination_value(
@@ -622,12 +712,12 @@ def _page_result(
     }
 
 
-def _priority(position: int) -> str:
+def _priority(score: int) -> str:
     return (
         "high"
-        if position <= 10
+        if score >= 70
         else "medium"
-        if position <= 25
+        if score >= 40
         else "low"
     )
 
@@ -638,7 +728,7 @@ def _missing_skills(
     content: str,
 ) -> list[str]:
     return [
-        f"Not evidenced in the supplied profile: {value}"
+        value
         for value in _unique(values)
         if (
             _contains_phrase(content, value)
@@ -727,7 +817,10 @@ def _explain_page(
 
     recommendations = []
 
-    for position, exam in enumerate(page, offset + 1):
+    for exam in page:
+        # Relative relevance for ranking/display, never eligibility or pass
+        # likelihood. Fixed scaling keeps the score independent of pagination.
+        score = max(0, min(100,  int(exam.get("_display_relevance_score", 0))))
         explanation = (
             "The certification's subject and syllabus show semantic alignment "
             "with your education, experience, and skills. Review its official "
@@ -772,9 +865,9 @@ def _explain_page(
                 ),
                 exam_code=_string(exam.get("exam_code")) or None,
                 url=_string(exam.get("source_url")) or None,
-                priority=_priority(position),
+                priority=_priority(score),
                 match={
-                    "score": None,
+                    "score": score,
                     "matching_skills": exam["_grounded_matching_skills"],
                     "missing_skills": missing,
                     "explanation": explanation,
@@ -834,9 +927,11 @@ def recommend_certifications(state: CareerState) -> dict:
         limit,
         len(candidates),
         (
-            "Recommendations preserve cosine order after professional validation, "
-            "owned-certification exclusion, and explicit credential checks. "
-            "Position is not a match percentage; eligibility has not been established."
+            "Recommendations are deterministically ranked by semantic relevance, "
+            "career-track alignment, and grounded exact skill overlap after "
+            "professional validation and credential checks. Scores from 0 to 100 "
+            "express relative relevance, not probability, pass likelihood, or "
+            "eligibility percentage."
             if candidates
             else
             "No certifications passed the current relevance policy. "
@@ -1044,6 +1139,111 @@ def _official_practice_available(
 
     # No inference from practice_url, missing resources, or unofficial resources.
     return None
+
+
+def _practice_and_official_resources(
+    blueprint: dict,
+) -> str:
+    """
+    Build the Practice & Official Resources section
+    using official URLs from the Cert Atlas blueprint.
+    """
+
+    resources = []
+    seen_urls = set()
+
+    provider = (
+        _string(blueprint.get("certifying_body"))
+        or "Official provider"
+    )
+
+    def add_resource(
+        title: object,
+        url: object,
+        resource_provider: object = "",
+    ) -> None:
+        title_text = _string(title)
+        url_text = _string(url)
+        provider_text = (
+            _string(resource_provider)
+            or provider
+        )
+
+        # Only keep valid HTTP/HTTPS links.
+        if not title_text or not _host(url_text):
+            return
+
+        normalized_url = url_text.rstrip("/")
+
+        # Avoid showing the same link twice.
+        if normalized_url in seen_urls:
+            return
+
+        seen_urls.add(normalized_url)
+
+        resources.append(
+            {
+                "title": title_text,
+                "url": url_text,
+                "provider": provider_text,
+            }
+        )
+
+    # Main official source for the certification/exam.
+    add_resource(
+        "Official exam / certification page",
+        blueprint.get("source_url"),
+    )
+
+    # Official objectives or study guide.
+    add_resource(
+        "Official study guide / exam objectives",
+        blueprint.get("official_objectives_url"),
+    )
+
+    # Official study resources supplied by Cert Atlas.
+    official_resources = blueprint.get(
+        "official_study_resources"
+    )
+
+    if isinstance(official_resources, list):
+        for resource in official_resources:
+
+            if not isinstance(resource, dict):
+                continue
+
+            # Do not present unofficial resources
+            # as official resources.
+            if resource.get("is_official") is not True:
+                continue
+
+            add_resource(
+                resource.get("title")
+                or resource.get("resource_type"),
+                resource.get("url"),
+                resource.get("provider"),
+            )
+
+    lines = [
+        "## Practice & Official Resources",
+        "",
+    ]
+
+    if not resources:
+        lines.append(
+            "No official study resources are available "
+            "in the dataset for this certification."
+        )
+        return "\n".join(lines)
+
+    for resource in resources:
+        lines.append(
+            f"- [{resource['title']}]"
+            f"({resource['url']})"
+            f" — {resource['provider']}"
+        )
+
+    return "\n".join(lines)
 
 
 def _fact(blueprint: dict, web: dict, key: str):
@@ -1353,6 +1553,7 @@ def _study_plan(
         # The last block may be shorter and is reserved for final review.
         weeks = (days + 6) // 7
         final_week_days = days - (weeks - 1) * 7
+        
         study_days = days - final_week_days
 
         allocations = _allocate_days(
@@ -1644,9 +1845,17 @@ def prepare_selected_certification(
         ),
     )
 
+    resources = _practice_and_official_resources(
+    blueprint
+)
+
     return {
         "certification_analysis":
-            information + "\n\n" + plan
+          information
+        + "\n\n"
+        + plan
+        + "\n\n"
+        + resources
     }
 
 

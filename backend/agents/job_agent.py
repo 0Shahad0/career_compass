@@ -1,5 +1,6 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, ToolMessage
+from langsmith import traceable
 
 from backend.graph.state import CareerState
 from backend.config import settings
@@ -381,7 +382,7 @@ def calculate_match_score(
 # ---------------------------------
 # Job Agent
 # ---------------------------------
-
+@traceable(name="job_agent", tags=["job-agent"])
 def job_agent(state: CareerState):
 
     user_profile = state.get("user_profile")
