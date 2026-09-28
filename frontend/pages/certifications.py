@@ -1,5 +1,6 @@
 from html import escape
 from pathlib import Path
+from components.navbar import render_navbar
 
 import requests
 import streamlit as st
@@ -35,6 +36,59 @@ st.html("""
     border-radius: 8px;
     margin: 3px;
     font-size: 12px;
+
+    .score-label {
+    color: #627D98;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.score-value {
+    color: #1597E5;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.score-note {
+    color: #829AB1;
+    font-size: 11px;
+    line-height: 1.35;
+    margin-top: 5px;
+}
+
+/* Change selected radio from red to light blue */
+div[role="radiogroup"] label[data-baseweb="radio"]
+input[type="radio"]:checked + div {
+    background-color: #39C6F4 !important;
+    border-color: #39C6F4 !important;
+}
+
+/* White dot inside selected radio */
+div[role="radiogroup"] label[data-baseweb="radio"]
+input[type="radio"]:checked + div > div {
+    background-color: white !important;
+}
+
+/* Search button */
+.st-key-cert_catalog_search .stFormSubmitButton button {
+    background: #51BEE8 !important;
+    border-color: #51BEE8 !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.st-key-cert_catalog_search .stFormSubmitButton button:hover {
+    background: #0B2E4F !important;
+    border-color: #0B2E4F !important;
+    color: #FFFFFF !important;
+}
+
+.st-key-cert_catalog_search .stFormSubmitButton button:active {
+    background: #0B2E4F !important;
+    border-color: #0B2E4F !important;
+    color: #FFFFFF !important;
 }
 </style>
 """)
@@ -47,6 +101,12 @@ if not token:
         st.switch_page("pages/sign_in.py")
     st.stop()
 
+# =================================
+# NAVBAR
+# =================================
+
+render_navbar("Certifications")
+
 # Prevent cached results from a previous signed-in session being reused.
 if st.session_state.get("cert_stage1_owner") != token:
     st.session_state["cert_stage1_owner"] = token
@@ -56,15 +116,8 @@ if st.session_state.get("cert_stage1_owner") != token:
     st.session_state["cert_stage1_search_offset"] = 0
     st.session_state["cert_stage1_search_pages"] = {}
 
-with st.container(
-    horizontal=True,
-    horizontal_alignment="distribute",
-):
-    st.image(ASSETS / "logo.png", width=170)
-    if st.button("Dashboard", type="tertiary"):
-        st.switch_page("pages/dashboard.py")
 
-st.divider()
+
 st.title("Certifications")
 st.caption(
     "Explore recommendations based on your education, experience, "
@@ -160,28 +213,32 @@ def render_result(item, position, manual=False):
                         f'</span>'
                         for skill in skills
                     ))
-                else:
-                    st.caption("No explicit matching skills listed.")
 
-                missing = match.get("missing_skills") or []
-                if missing:
-                    st.caption("Skills to review")
-                    for skill in missing:
-                        st.write(f"- {skill}")
+
 
         with right:
             if not manual:
-                st.caption(
-                    f"{str(item.get('priority', 'medium')).title()} priority"
+                score = (item.get("match") or {}).get("score")
+
+                if isinstance(score, (int, float)):
+                     st.html(
+                         f"""
+                        <div class="score-label">Profile Recommendation Score</div>
+                        <div class="score-value">{int(score)}</div>
+                        <div class="score-note">
+                        Based on your education, experience, and skills.
+                      </div>
+                      """
                 )
-                st.caption("Based on list position")
+                else:
+                    st.caption("Recommendation score unavailable.")
 
             if st.button(
                 "View certification",
                 key=(
                     f"cert_select_"
                     f"{'search' if manual else 'rec'}_"
-                    f"{position}_{exam_id}"
+                  f"{position}_{exam_id}"
                 ),
                 type="primary",
                 disabled=not bool(exam_id),

@@ -1,6 +1,8 @@
 import streamlit as st
 from pathlib import Path
 import requests
+from components.navbar import render_navbar
+
 
 from components.profile import render_profile_editor
 
@@ -34,7 +36,11 @@ if profile_data is None:
     st.info("Please upload your CV or add your portfolio first.")
     st.stop()
 
+# --------------------------------------------------
+# Navbar
+# --------------------------------------------------
 
+render_navbar("Profile")
 # --------------------------------------------------
 # Header
 # --------------------------------------------------
@@ -42,10 +48,8 @@ if profile_data is None:
 left, center, right = st.columns([1, 1.5, 1])
 
 with center:
-    st.image(ASSETS / "logo.png", width=160)
-
-    st.title("Review Your Profile")
-    st.write(
+       st.title("Review Your Profile")
+       st.write(
         "We've extracted the following information from your documents "
         "and portfolio. Please review and edit it before continuing."
     )

@@ -1,6 +1,7 @@
 from pathlib import Path
 import requests
 import streamlit as st
+from components.navbar import render_navbar
 
 # =================================
 # Page settings
@@ -28,35 +29,12 @@ if not token:
     if st.button("Sign in", type="primary"):
         st.switch_page("pages/sign_in.py")
     st.stop()
-
-
+    
 # =================================
 # NAVBAR
 # =================================
 
-with st.container(
-    key="freelance_nav",
-    horizontal=True,
-    horizontal_alignment="distribute",
-    vertical_alignment="center"
-):
-    st.image(logo, width=170)
-
-    st.html(
-        """
-        <nav class="cc-navlinks">
-            <a href="#">Dashboard</a>
-            <a href="#">Jobs</a>
-            <a class="active" href="#">Freelance</a>
-            <a href="#">Certifications</a>
-            <a href="#">Profile</a>
-        </nav>
-        """
-    )
-
-    if st.button("<- Dashboard", key="fl_nav_back", type="tertiary"):
-        st.switch_page("pages/dashboard.py")
-
+render_navbar("Freelance")
 
 # =================================
 # HEADER
@@ -177,7 +155,13 @@ def show_proposal_dialog(project_index: int, project: dict):
     # Extract project data that we need for both the API call and display
     title = project.get("title", "Untitled Project")
     match_info = project.get("match", {})
-    description = match_info.get("explanation", "")
+    # Use the match explanation as the description; fall back to the project's
+    # own description field if explanation is empty (some API responses omit it)
+    description = (
+        match_info.get("explanation", "")
+        or project.get("description", "")
+        or title  # last resort — at least give the LLM the title
+    )
     budget = project.get("budget_or_rate", "")
     matching_skills = match_info.get("matching_skills", [])
     missing_skills = match_info.get("missing_skills", [])
@@ -494,7 +478,9 @@ if projects:
                     # VIEW PROJECT button -- opens the URL on Freelancer.com
                     with btn_view:
                         if project_url:
-                            st.link_button(
+                            with st.container(key=f"view_project_button_{project_index}"):
+
+                              st.link_button(
                                 "View project",
                                 url=str(project_url),
                                 type="primary",

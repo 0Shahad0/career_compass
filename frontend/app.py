@@ -1,5 +1,6 @@
 from pathlib import Path
 import streamlit as st
+import base64
 
 
 # ---------------------------------
@@ -45,46 +46,6 @@ def account_notice():
         type="primary"
     ):
         st.rerun()
-
-
-# =================================
-# 1. NAVIGATION
-# =================================
-
-with st.container(
-    key="home_nav",
-    horizontal=True,
-    horizontal_alignment="distribute",
-    vertical_alignment="center"
-):
-
-    # Logo
-    st.image(
-        logo,
-        width=170
-    )
-
-    # Right side buttons
-    with st.container(
-        horizontal=True,
-        width="content",
-        vertical_alignment="center"
-    ):
-
-        if st.button(
-            "Sign in",
-            key="nav_signin",
-            type="tertiary"
-        ):
-            st.switch_page("pages/sign_in.py")
-
-        if st.button(
-            "Get started",
-            key="nav_start",
-            type="primary",
-            icon=":material/arrow_forward:"
-        ):
-            st.switch_page("pages/sign_up.py")
 
 
 # =================================
@@ -247,15 +208,55 @@ with st.container(
                 height="stretch"
             ):
 
-                # Icon
-                with st.container(
-                    key=f"service_icon_{i}",
-                    width=30
-                ):
+                              # Icon
+                icon_paths = {
+                    "Jobs": (
+                        '<rect x="3" y="7" width="18" height="14" rx="2"/>'
+                        '<path d="M8 7V3h8v4M8 7v14M16 7v14"/>'
+                    ),
+                    "Freelance": (
+                        '<rect x="3" y="6" width="18" height="15" rx="2"/>'
+                        '<path d="M8 6V3h8v3M8 12v3M12 10v7M16 12v3"/>'
+                    ),
+                    "Certifications": (
+                        '<circle cx="12" cy="8" r="6"/>'
+                        '<path d="m8 13-2 9 6-3 6 3-2-9"/>'
+                    ),
+                }
 
-                    st.markdown(
-                        f":material/{service['icon']}:"
-                    )
+                svg = f"""
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="24" height="24" viewBox="0 0 24 24"
+                     fill="none" stroke="#1597E5"
+                     stroke-width="1.7"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    {icon_paths[service["title"]]}
+                </svg>
+                """
+
+                encoded_icon = base64.b64encode(
+                    svg.encode("utf-8")
+                ).decode("ascii")
+
+                st.html(f"""
+                    <div style="
+                        width:52px; height:52px;
+                        background:#EDF7FD;
+                        border-radius:9px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                    ">
+                        <img
+                            src="data:image/svg+xml;base64,{encoded_icon}"
+                            alt=""
+                            width="24"
+                            height="24"
+                            style="display:block;"
+                        >
+                    </div>
+                """)
 
 
                 # Text
@@ -267,16 +268,6 @@ with st.container(
                     service["description"]
                 )
 
-
-                # Button
-                if st.button(
-                    service["button"],
-                    key=f"service_{i}",
-                    type="tertiary",
-                    icon=":material/arrow_forward:"
-                ):
-
-                    account_notice()
 
 
 # =================================
@@ -333,40 +324,56 @@ with st.container(
     ]
 
 
-    columns = st.columns(
-        3,
-        gap="large"
+    step_icons = {
+        "person_add": (
+            '<circle cx="10" cy="7" r="4"/>'
+            '<path d="M3 21v-2a7 7 0 0 1 14 0v2'
+            'M20 8v6M17 11h6"/>'
+        ),
+        "search": (
+            '<circle cx="10" cy="10" r="7"/>'
+            '<path d="m15 15 6 6"/>'
+        ),
+        "trending_up": (
+            '<path d="m3 18 6-7 4 3 8-10M15 4h6v6"/>'
+        ),
+    }
+
+    step_cards = []
+
+    for i, step in enumerate(steps):
+        svg = f"""
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="32" height="32" viewBox="0 0 24 24"
+             fill="none" stroke="white" stroke-width="1.7"
+             stroke-linecap="round" stroke-linejoin="round">
+            {step_icons[step["icon"]]}
+        </svg>
+        """
+
+        encoded_icon = base64.b64encode(
+            svg.encode("utf-8")
+        ).decode("ascii")
+
+        step_cards.append(f"""
+            <div class="cc-how-step">
+                <div class="cc-how-icon">
+                    <img
+                        src="data:image/svg+xml;base64,{encoded_icon}"
+                        width="32" height="32" alt=""
+                    >
+                    <span class="cc-how-number">{i + 1}</span>
+                </div>
+                <h3>{step["title"]}</h3>
+                <p>{step["description"]}</p>
+            </div>
+        """)
+
+    st.html(
+        '<div class="cc-how-grid">'
+        + "".join(step_cards)
+        + '</div>'
     )
-
-
-    for i in range(3):
-
-        step = steps[i]
-
-        with columns[i]:
-
-            with st.container(
-                key=f"home_step_{i}",
-                horizontal_alignment="center"
-            ):
-
-                st.markdown(
-                    f":material/{step['icon']}:"
-                )
-
-                st.caption(
-                    f"STEP {i + 1}"
-                )
-
-                st.subheader(
-                    step["title"],
-                    text_alignment="center"
-                )
-
-                st.write(
-                    step["description"]
-                )
-
 
 # =================================
 # 5. WHY CAREERCOMPASS
@@ -506,7 +513,7 @@ with st.container(
         type="primary",
         icon=":material/arrow_forward:"
     ):
-        account_notice()
+        st.switch_page("pages/sign_up.py")
 
 
 # =================================
@@ -590,7 +597,7 @@ with st.container(
             key="footer_start",
             type="tertiary"
         ):
-            account_notice()
+            st.switch_page("pages/sign_up.py")
 
 
     st.caption(
