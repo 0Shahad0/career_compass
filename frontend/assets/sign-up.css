@@ -3,6 +3,15 @@
    SIGN UP PAGE
    ================================================== */
 
+/*HIDE STREAMLIT DEFAULT UI */
+[data-testid="stHeader"] {display: none !important;}
+[data-testid="stExpandSidebarButton"] {display: none !important;}
+[data-testid="stSidebar"] {display: none !important;}
+
+/* Remove Streamlit top spacing */
+.stMainBlockContainer {
+    padding-top: 0 !important;}
+
 /* Remove normal page margins only on signup */
 .stMainBlockContainer:has(.st-key-signup_shell) {
     max-width: 100% !important;
@@ -94,7 +103,7 @@
 
     background: #FFFFFF !important;
 
-    padding: 45px 7vw 40px !important;
+    padding: 80px 7vw 60px !important;
 
     position: relative;
 }
@@ -312,4 +321,9 @@
 .st-key-signup_signin button:hover p {
     color: #0B2E4F !important;
     background: transparent !important;
+}
+
+/* Move only the left-side content down */
+.signup-left-content {
+    transform: translateY(55px) !important;
 }

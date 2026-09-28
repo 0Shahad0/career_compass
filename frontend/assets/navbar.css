@@ -1,4 +1,24 @@
 /* =========================================
+   HIDE STREAMLIT DEFAULT UI
+   ========================================= */
+
+[data-testid="stHeader"] {
+    display: none !important;
+}
+
+[data-testid="stExpandSidebarButton"] {
+    display: none !important;
+}
+
+[data-testid="stSidebar"] {
+    display: none !important;
+}
+
+.stMainBlockContainer {
+    padding-top: 0 !important;
+}
+
+/* =========================================
    SHARED NAVBAR
    ========================================= */
 

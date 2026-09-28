@@ -320,3 +320,8 @@
         font-size: 40px !important;
     }
 }
+
+/* Move only the left-side content down */
+.signin-left-content {
+    transform: translateY(55px) !important;
+}

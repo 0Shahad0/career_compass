@@ -36,7 +36,7 @@ st.html("""
     border-radius: 8px;
     margin: 3px;
     font-size: 12px;
-
+}
     .score-label {
     color: #627D98;
     font-size: 12px;
@@ -72,23 +72,34 @@ input[type="radio"]:checked + div > div {
 
 /* Search button */
 .st-key-cert_catalog_search .stFormSubmitButton button {
-    background: #51BEE8 !important;
-    border-color: #51BEE8 !important;
+    background: #1597E5 !important;
+    border: 1px solid #1597E5 !important;
     color: #FFFFFF !important;
     font-weight: 600 !important;
+    border-radius: 8px !important;
     transition: all 0.2s ease !important;
 }
 
+/* Hover */
 .st-key-cert_catalog_search .stFormSubmitButton button:hover {
     background: #0B2E4F !important;
     border-color: #0B2E4F !important;
     color: #FFFFFF !important;
 }
 
+/* While pressing */
 .st-key-cert_catalog_search .stFormSubmitButton button:active {
     background: #0B2E4F !important;
     border-color: #0B2E4F !important;
     color: #FFFFFF !important;
+}
+
+/* After clicking / focus */
+.st-key-cert_catalog_search .stFormSubmitButton button:focus {
+    background: #0B2E4F !important;
+    border-color: #0B2E4F !important;
+    color: #FFFFFF !important;
+    box-shadow: none !important;
 }
 </style>
 """)

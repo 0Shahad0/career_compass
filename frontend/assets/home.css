@@ -33,12 +33,20 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--cc-accent)!importan
 @media(max-width:640px){.stMainBlockContainer{padding:1.2rem}.st-key-home_hero{padding:35px 0}.cc-navlinks{gap:18px}.cc-hero-title{font-size:36px!important}.st-key-home_services,.st-key-home_about{padding:35px 18px}.st-key-home_how{padding:38px 0}.cc-section-heading h2{font-size:28px}.st-key-home_cta{padding:32px 18px}.compass-hero{max-width:420px}}
 
 
-/* Keep the native toolbar clear of the page navigation. */
-.stMainBlockContainer{padding-top:5rem}
-[data-testid='stHeader']{background:white;color:var(--cc-primary)}
+/* =========================================
+   HIDE STREAMLIT DEFAULT UI
+   ========================================= */
+
+[data-testid="stHeader"] {display: none !important;}
+[data-testid="stExpandSidebarButton"] {display: none !important;}
+[data-testid="stSidebar"] {display: none !important;}
+.stMainBlockContainer {padding-top: 0 !important;}
+
 button p{color:inherit!important}
 [data-testid='stDialog'] [role='dialog']{background:white;color:var(--cc-text)}
-@media(max-width:640px){.stMainBlockContainer{padding-top:5rem}}
+@media(max-width:640px){
+    .stMainBlockContainer {padding-top: 0 !important;}
+}
 .cc-section-heading,#home{scroll-margin-top:95px}
 /* مربع أيقونات الخدمات */
 [class*="st-key-service_icon_"] {
