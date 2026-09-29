@@ -176,7 +176,7 @@ class ProfileReview(SQLModel, table=True):
     review_status: str = "draft"
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user: Optional[User] = Relationship(
         back_populates="profile_review"
@@ -259,7 +259,7 @@ class ResumeDocument(SQLModel, table=True):
     original_filename: str
     status: str = "uploaded"
     error_message: str = ""
-    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
+    uploaded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user: Optional[User] = Relationship(back_populates="resume_documents")
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlmodel import Session, select
 
 from backend.database.models import User, UserProfile, ProfileReview
@@ -95,7 +95,7 @@ def create_or_update_profile_review(
     else:
         review.profile_data = profile_data
         review.review_status = review_status
-        review.updated_at = datetime.utcnow()
+        review.updated_at = datetime.now(timezone.utc)
 
     session.commit()
     session.refresh(review)
