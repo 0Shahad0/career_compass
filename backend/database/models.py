@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
@@ -11,7 +11,7 @@ class User(SQLModel, table=True):
     email: str = Field(index=True, unique=True)
     password_hash: str
     is_active: bool = Field(default=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     profile: Optional["UserProfile"] = Relationship(
         back_populates="user",
@@ -175,7 +175,7 @@ class ProfileReview(SQLModel, table=True):
     profile_data: str = ""
     review_status: str = "draft"
 
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     user: Optional[User] = Relationship(
@@ -278,7 +278,7 @@ class PortfolioLink(SQLModel, table=True):
     source: str = "website"
     status: str = "pending"
     error_message: str = ""
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user: Optional[User] = Relationship(back_populates="portfolio_links")
 
@@ -291,6 +291,6 @@ class CareerRequestRecord(SQLModel, table=True):
 
     query: str
     response: str = ""
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user: Optional[User] = Relationship(back_populates="career_requests")
