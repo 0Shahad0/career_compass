@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from pathlib import Path
 import requests
@@ -16,8 +17,10 @@ st.set_page_config(
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
 st.html(ASSETS / "home.css")
 
-API_BASE = "http://127.0.0.1:8000"
-
+API_BASE = os.getenv(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 
 # --------------------------------------------------
 # Load profile

@@ -2,6 +2,7 @@ from html import escape
 from pathlib import Path
 from components.navbar import render_navbar
 
+import os
 import requests
 import streamlit as st
 
@@ -12,7 +13,10 @@ st.set_page_config(
 )
 
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = os.getenv(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 PAGE_SIZE = 10
 
 st.html(ASSETS / "home.css")

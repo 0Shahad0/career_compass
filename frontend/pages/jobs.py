@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import streamlit as st
 import requests
 from components.navbar import render_navbar
@@ -15,8 +16,10 @@ st.set_page_config(
 ASSETS = Path(__file__).resolve().parents[1] / "assets"
 st.html(ASSETS / "home.css")
 logo = ASSETS / "logo.png"
-API_BASE = "http://127.0.0.1:8000"
-
+API_BASE = os.getenv(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 
 # ---------------------------------
 # Auth guard

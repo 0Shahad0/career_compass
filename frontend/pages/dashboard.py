@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import streamlit as st
 import requests
 import base64
@@ -25,8 +26,10 @@ st.html(ASSETS / "dashboard.css")
 
 logo = ASSETS / "logo.png"
 
-API_BASE = "http://127.0.0.1:8000"
-
+API_BASE = os.getenv(
+    "API_BASE_URL",
+    "http://127.0.0.1:8000"
+)
 
 # ---------------------------------
 # Auth guard — must be signed in
