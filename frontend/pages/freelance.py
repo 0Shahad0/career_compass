@@ -45,7 +45,7 @@ render_navbar("Freelance")
 
 with st.container(key="freelance_hero"):
 
-    left, right = st.columns([2, 1], vertical_alignment="center")
+    left = st.container()
 
     with left:
         st.html('<p class="cc-dashboard-eyebrow">SELECTED FOR YOUR EXPERIENCE</p>')
@@ -55,14 +55,6 @@ with st.container(key="freelance_hero"):
             "Projects selected based on your skills and professional experience."
             "</p>"
         )
-
-    with right:
-        with st.container(horizontal_alignment="right"):
-            st.button(
-                "Sample profile & recommendations",
-                key="fl_sample_btn",
-                type="secondary"
-            )
 
 
 # =================================
