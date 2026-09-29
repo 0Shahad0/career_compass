@@ -1,6 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 from sqlmodel import Session, select
@@ -77,7 +77,7 @@ def parse_resume_date(
             return datetime.strptime(
                 value,
                 date_format
-            )
+            ).replace(tzinfo=timezone.utc)
         except ValueError:
             continue
 
